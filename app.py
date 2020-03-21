@@ -1,7 +1,11 @@
 from datetime import date
 
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
 import pandas as pd
-from flask import Flask, render_template
+from dash.dependencies import Input, Output
+from flask import Flask
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
@@ -9,13 +13,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import Config
 
-app = Flask(__name__)
-app.config.from_object(Config)
+server = Flask(__name__)
+server.config.from_object(Config)
 
-admin = Admin(app, name="covidmap", template_mode="bootstrap3")
+admin = Admin(server, name="covidmap", template_mode="bootstrap3")
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+db = SQLAlchemy(server)
+migrate = Migrate(server, db)
 
 from models import CaseData, Location  # noqa E402
 
@@ -32,14 +36,38 @@ def get_historical_data():
     df = df.sort_index().reindex(date_range, method="ffill")
     df.fillna(inplace=True, value=0)
 
-    return df.to_json(orient="index", date_format="iso")
+    return df
 
 
-@app.route("/")
-def index():
-    historical = get_historical_data()
-    return render_template("index.html", historical=historical)
+historical = get_historical_data()
+dates = historical.index.strftime("%Y-%m-%d").tolist()
+
+
+app = dash.Dash("Hello World", server=server)
+
+app.layout = html.Div(
+    children=[
+        html.H1(children="COVIDMAP.kz"),
+        dcc.Graph(
+            id="example-graph",
+            figure={
+                "data": [
+                    {
+                        "x": dates,
+                        "y": historical.confirmed.tolist(),
+                        "type": "bar",
+                        "name": "Confirmed Cases",
+                    },
+                ],
+                "layout": {"title": "Dash Data Visualization"},
+            },
+        ),
+    ]
+)
 
 
 admin.add_view(ModelView(Location, db.session))
 admin.add_view(ModelView(CaseData, db.session))
+
+if __name__ == "__main__":
+    app.run_server()
