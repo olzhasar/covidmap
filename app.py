@@ -1,5 +1,6 @@
 import json
 
+import pandas as pd
 from flask import Flask
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -21,8 +22,8 @@ from models import CaseData, Location  # noqa E402
 
 @app.route("/")
 def index():
-    data = CaseData.query.all()
-    return json.dumps(data)
+    df = pd.read_sql_table('case_data', con=db.engine)
+    return df.to_json()
 
 
 admin.add_view(ModelView(Location, db.session))
