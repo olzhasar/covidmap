@@ -74,6 +74,7 @@ fig.update_layout(mapbox_style="carto-darkmatter")
 fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 app = dash.Dash("COVID-19 Map Kazakhstan", server=server)
+app.title = "Карта коронавирусной инфекции в Казахстане"
 
 app.layout = html.Div(
     children=[
