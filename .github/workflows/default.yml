@@ -13,6 +13,6 @@ jobs:
 
     steps:
     - name: Upload via rsync
-    - uses: contention/action-rsync-deploy@master
-    - secrets: ["DEPLOY_KEY"]
-    - args: ["-avzr", "--exclude .git/ --exclude .gitignore", "root@covidmap.kz:/opt/app/"]
+      uses: contention/action-rsync-deploy@master
+      secrets: ["DEPLOY_KEY"]
+      args: ["-avzr", "--exclude .git/ --exclude .gitignore", "root@covidmap.kz:/opt/app/"]
