@@ -4,13 +4,11 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-from dash.dependencies import Input, Output
 from flask import Flask
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-import plotly.graph_objects as go
 import plotly.express as px
 
 from config import Config
@@ -24,6 +22,10 @@ db = SQLAlchemy(server)
 migrate = Migrate(server, db)
 
 from models import CaseData, Location  # noqa E402
+
+
+admin.add_view(ModelView(Location, db.session))
+admin.add_view(ModelView(CaseData, db.session))
 
 
 def get_historical_data():
@@ -55,24 +57,6 @@ historical = get_historical_data()
 df = get_current_data()
 dates = historical.index.strftime("%Y-%m-%d").tolist()
 
-# fig = go.Figure(
-#     data=go.Scattergeo(
-#         lat=df["location.latitude"],
-#         lon=df["location.longitude"],
-#         text=df["location.name"],
-#         marker=dict(
-#             size=df["confirmed"],
-#             colorbar=dict(
-#                 titleside="right",
-#                 outlinecolor="rgba(68, 68, 68, 0)",
-#                 ticks="outside",
-#                 showticksuffix="last",
-#                 dtick=0.1,
-#             ),
-#         ),
-#     )
-# )
-
 fig = px.scatter_mapbox(
     df,
     lat="location.latitude",
@@ -80,7 +64,9 @@ fig = px.scatter_mapbox(
     hover_name="location.name",
     size="confirmed",
     zoom=4,
-    height=800,
+    center={"lat": 48.0196, "lon": 66.9237},
+    opacity=0.7,
+    height=600,
 )
 
 
@@ -91,28 +77,95 @@ app = dash.Dash("Hello World", server=server)
 
 app.layout = html.Div(
     children=[
-        html.H1(children="COVIDMAP.kz", className="title"),
-        dcc.Graph(id="graph", figure=fig),
-        # dcc.Graph(
-        #     id="example-graph",
-        #     figure={
-        #         "data": [
-        #             {
-        #                 "x": dates,
-        #                 "y": historical.confirmed.tolist(),
-        #                 "type": "bar",
-        #                 "name": "Confirmed Cases",
-        #             },
-        #         ],
-        #         "layout": {"title": "Dash Data Visualization"},
-        #     },
-        # ),
-    ]
+        html.Header(
+            children=[
+                html.H1(
+                    "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
+                    className="main-title",
+                ),
+            ]
+        ),
+        html.Div(
+            children=[
+                html.Div(
+                    children=[
+                        html.Div(
+                            children=[
+                                html.H2("58", className="title"),
+                                html.H3(
+                                    "Зарегистрированных случаев", className="subtitle"
+                                ),
+                            ],
+                            className="card",
+                        ),
+                        html.Div(
+                            children=[
+                                html.H2("0", className="title"),
+                                html.H3("Выздоровевших", className="subtitle"),
+                            ],
+                            className="card",
+                        ),
+                        html.Div(
+                            children=[
+                                html.H2("0", className="title"),
+                                html.H3("Фатальных исходов", className="subtitle"),
+                            ],
+                            className="card",
+                        ),
+                    ],
+                    className="box",
+                ),
+                html.Div(
+                    children=[
+                        html.Div(
+                            children=[dcc.Graph(id="graph", figure=fig),],
+                            className="box",
+                        ),
+                        html.Div(children=[], className="box",),
+                    ],
+                ),
+                html.Div(
+                    children=[
+                        html.Div(
+                            children=[
+                                dcc.Graph(
+                                    id="dynamics-graph",
+                                    figure={
+                                        "data": [
+                                            {
+                                                "x": historical.confirmed.tolist(),
+                                                "y": dates,
+                                                "orientation": "h",
+                                                "type": "bar",
+                                                "name": "Confirmed Cases",
+                                            },
+                                        ],
+                                        "layout": {
+                                            "title": "Динамика с 01.03.2020",
+                                            "paper_bgcolor": "#22252b",
+                                            "plot_bgcolor": "rgba(0,0,0,0)",
+                                        },
+                                    },
+                                ),
+                            ],
+                            className="panel",
+                        ),
+                    ],
+                    className="box",
+                ),
+                html.Div(children=[], className="box",),
+            ],
+            className="container",
+        ),
+        html.Footer(
+            children=[
+                html.P(
+                    "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
+                ),
+            ]
+        ),
+    ],
 )
-
-
-admin.add_view(ModelView(Location, db.session))
-admin.add_view(ModelView(CaseData, db.session))
 
 if __name__ == "__main__":
     app.run_server()
