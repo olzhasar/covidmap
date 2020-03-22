@@ -15,4 +15,4 @@ jobs:
     - name: Upload via rsync
     - uses: contention/action-rsync-deploy@master
     - secrets: ["DEPLOY_KEY"]
-      -args: ["-avzr", "--exclude .git/ --exclude .gitignore", "root@covidmap.kz:/opt/app/"]
+    - args: ["-avzr", "--exclude .git/ --exclude .gitignore", "root@covidmap.kz:/opt/app/"]
