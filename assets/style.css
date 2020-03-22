@@ -71,3 +71,7 @@ footer {
 .title, .subtitle {
   margin: 0;
 }
+
+.modebar{
+  display: none !important;
+}
