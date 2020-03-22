@@ -6,8 +6,8 @@ from app import db
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), index=True, unique=True)
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     case_data = db.relationship("CaseData", backref="location", lazy="dynamic")
 
     def __repr__(self):
