@@ -50,12 +50,9 @@ footer {
   padding: 15px;
 }
 
-.container {
-  display: grid;
-}
-
 @media only screen and (min-width: 768px) {
   .container {
+    display: grid;
     grid-template-columns: 14.6% 61.8% 23.6%;
   }
 }
