@@ -67,7 +67,7 @@ fig = px.scatter_mapbox(
     center={"lat": 48.0196, "lon": 66.9237},
     opacity=0.7,
     height=600,
-    color_discrete_sequence=["rgba(255,0,0,.7)"],
+    color_discrete_sequence=["rgba(200,0,0,.7)"],
 )
 
 
