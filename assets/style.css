@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab:400,700&display=swap&subset=cyrillic');
+
 html {
   position: relative;
   min-height: 100%;
 }
 
 body {
+  font-family: 'Roboto Slab', sans-serif;
   background-color: #1a1c23;
   margin: 0 0 100px;
 }
@@ -70,6 +73,14 @@ footer {
 
 .title, .subtitle {
   margin: 0;
+}
+
+.danger {
+  color: rgb(230, 0, 0);
+}
+
+.success {
+  color: rgb(112, 168, 0);
 }
 
 .modebar{

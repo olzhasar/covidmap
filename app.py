@@ -100,7 +100,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(
                             children=[
-                                html.H2("58", className="title"),
+                                html.H2("58", className="title danger"),
                                 html.H3(
                                     "Зарегистрированных случаев", className="subtitle"
                                 ),
@@ -109,7 +109,7 @@ app.layout = html.Div(
                         ),
                         html.Div(
                             children=[
-                                html.H2("0", className="title"),
+                                html.H2("0", className="title success"),
                                 html.H3("Выздоровевших", className="subtitle"),
                             ],
                             className="card",
