@@ -1,43 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:400,700&display=swap&subset=cyrillic');
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
   font-family: 'Roboto Slab', sans-serif;
   background-color: #1a1c23;
-  margin: 0 0 100px;
+  margin: 15px;
 }
 
 h1, h2, h3, h4, h5, h6, label, p {
   color: #bdbdbd;
 }
 
-h2 {
-  font-size: 64px;
-}
-
-header, footer, .card, .panel {
+.box, .card, .panel {
   background-color: #22252b;
-}
-
-header {
-  text-align: center;
-  margin: 0;
-  width: 100%;
-  min-height: 50px;
-}
-
-footer {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 100px;
-  width: 100%;
-  overflow: hidden;
 }
 
 .main-title {
@@ -45,34 +19,23 @@ footer {
   padding: 30px;
 }
 
-.mapboxgl-canvas {
-  height: 100%;
-}
-
 .box {
-  padding: 15px;
-}
-
-@media only screen and (min-width: 768px) {
-  .container {
-    display: grid;
-    grid-template-columns: 14.6% 61.8% 23.6%;
-  }
-}
-
-.panel {
-  padding: 5px 30px;
   text-align: center;
+  padding: 15px;
 }
 
 .card {
   padding: 15px;
-  margin-bottom: 30px;
   text-align: center;
 }
 
-.title, .subtitle {
+.card-title, .card-subtitle {
   margin: 0;
+}
+
+.card-title {
+  font-size: 64px;
+  font-weight: 700;
 }
 
 .danger {
@@ -81,6 +44,39 @@ footer {
 
 .success {
   color: rgb(112, 168, 0);
+}
+
+.dashboard {
+  display: grid;
+  grid-gap: 15px;
+  height: 100vh;
+  grid-template-rows: 1fr 6fr 1fr;
+  grid-template-columns: 1fr 4fr 2fr;
+  grid-template-areas:	  "header header header"
+			  "left_col main_col right_col"	
+			  "footer footer footer"
+}
+
+.header {
+  grid-area: header;
+}
+
+.footer {
+  grid-area: footer;
+}
+
+.left-col {
+  grid-area: left_col;
+  display: grid;
+  grid-gap: 15px;
+}
+
+.main-col {
+  grid-area: main_col;
+}
+
+.right-col {
+  grid-area: right_col;
 }
 
 .modebar{

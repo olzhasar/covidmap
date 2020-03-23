@@ -66,7 +66,7 @@ fig = px.scatter_mapbox(
     zoom=4,
     center={"lat": 48.0196, "lon": 66.9237},
     opacity=0.7,
-    height=600,
+    height=700,
     color_discrete_sequence=["rgba(200,0,0,.7)"],
 )
 
@@ -88,92 +88,95 @@ app.layout = html.Div(
     children=[
         html.Header(
             children=[
-                html.H1(
-                    "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
-                    className="main-title",
-                ),
-            ]
+                html.Div(
+                    children=[
+                        html.H1(
+                            "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
+                            className="main-title",
+                        ),
+                    ],
+                    className="box",
+                )
+            ],
+            className="header",
         ),
         html.Div(
             children=[
                 html.Div(
                     children=[
-                        html.Div(
-                            children=[
-                                html.H2("58", className="title danger"),
-                                html.H3(
-                                    "Зарегистрированных случаев", className="subtitle"
-                                ),
-                            ],
-                            className="card",
-                        ),
-                        html.Div(
-                            children=[
-                                html.H2("0", className="title success"),
-                                html.H3("Выздоровевших", className="subtitle"),
-                            ],
-                            className="card",
-                        ),
-                        html.Div(
-                            children=[
-                                html.H2("0", className="title"),
-                                html.H3("Фатальных исходов", className="subtitle"),
-                            ],
-                            className="card",
+                        html.H2("58", className="card-title danger"),
+                        html.H3(
+                            "Зарегистрированных случаев", className="card-subtitle",
                         ),
                     ],
-                    className="box",
+                    className="card",
                 ),
                 html.Div(
                     children=[
-                        html.Div(
-                            children=[dcc.Graph(id="graph", figure=fig),],
-                            className="box",
-                        ),
-                        html.Div(children=[], className="box",),
+                        html.H2("0", className="card-title success"),
+                        html.H3("Выздоровевших", className="card-subtitle"),
                     ],
+                    className="card",
                 ),
                 html.Div(
                     children=[
-                        html.Div(
-                            children=[
-                                dcc.Graph(
-                                    id="dynamics-graph",
-                                    figure={
-                                        "data": [
-                                            {
-                                                "x": historical.confirmed.tolist(),
-                                                "y": dates,
-                                                "orientation": "h",
-                                                "type": "bar",
-                                                "name": "Confirmed Cases",
-                                            },
-                                        ],
-                                        "layout": {
-                                            "title": "Динамика с 01.03.2020",
-                                            "paper_bgcolor": "#22252b",
-                                            "plot_bgcolor": "rgba(0,0,0,0)",
-                                        },
-                                    },
-                                ),
-                            ],
-                            className="panel",
-                        ),
+                        html.H2("0", className="card-title"),
+                        html.H3("Фатальных исходов", className="card-subtitle"),
                     ],
-                    className="box",
+                    className="card",
                 ),
-                html.Div(children=[], className="box",),
+                html.Div(
+                    children=[
+                        html.P("Данные обновлены"),
+                        html.H3("23.03.2020 23:17", className="card-subtitle"),
+                    ],
+                    className="card",
+                ),
             ],
-            className="container",
+            className="left-col",
         ),
-        html.Footer(
+        html.Div(children=[dcc.Graph(id="map", figure=fig),], className="main-col"),
+        html.Div(
             children=[
-                html.P(
-                    "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
+                dcc.Graph(
+                    id="dynamics-graph",
+                    figure={
+                        "data": [
+                            {
+                                "x": historical.confirmed.tolist(),
+                                "y": dates,
+                                "orientation": "h",
+                                "type": "bar",
+                                "name": "Confirmed Cases",
+                            },
+                        ],
+                        "layout": {
+                            "title": "Динамика с 01.03.2020",
+                            "height": "700",
+                            "paper_bgcolor": "#22252b",
+                            "plot_bgcolor": "rgba(0,0,0,0)",
+                        },
+                    },
                 ),
-            ]
+            ],
+            className="right-col",
+        ),
+        html.Div(
+            children=[
+                html.Div(
+                    children=[
+                        html.P(
+                            "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
+                            className="main-title",
+                        ),
+                    ],
+                    className="box",
+                )
+            ],
+            className="footer",
         ),
     ],
+    className="dashboard",
 )
 
 if __name__ == "__main__":
