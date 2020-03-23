@@ -82,6 +82,7 @@ app = dash.Dash(
     ],
 )
 app.title = "Карта коронавирусной инфекции - Казахстан"
+app.scripts.serve_locally = True
 
 app.layout = html.Div(
     children=[
