@@ -130,7 +130,7 @@ app.layout = html.Div(
                         html.P("Данные обновлены"),
                         html.H3("23.03.2020 23:17", className="card-subtitle"),
                     ],
-                    className="card",
+                    className="card is-hidden-mobile",
                 ),
             ],
             className="left-col",

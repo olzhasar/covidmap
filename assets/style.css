@@ -65,11 +65,15 @@ h1, h2, h3, h4, h5, h6, label, p {
 
   .dashboard {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     grid-template-areas:    "header"
-			    "main_col"	
 			    "left_col"	
+			    "main_col"	
 			    "right_col"	
 			    "footer"
+  }
+  .is-hidden-mobile {
+    display: none;
   }
 }
 
