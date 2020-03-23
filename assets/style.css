@@ -56,6 +56,15 @@ h1, h2, h3, h4, h5, h6, label, p {
 			  "left_col main_col right_col"	
 			  "footer footer footer"
 }
+@media (max-width: 800px) {
+  .dashboard {
+    grid-template-areas:    "header"
+			    "main_col"	
+			    "left_col"	
+			    "right_col"	
+			    "footer"
+  }
+}
 
 .header {
   grid-area: header;
