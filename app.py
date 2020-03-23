@@ -67,7 +67,7 @@ fig = px.scatter_mapbox(
     center={"lat": 48.0196, "lon": 66.9237},
     opacity=0.7,
     height=700,
-    color_discrete_sequence=["rgba(200,0,0,.7)"],
+    color_discrete_sequence=["rgba(230, 0, 0, .7)"],
 )
 
 
@@ -143,15 +143,15 @@ app.layout = html.Div(
                     figure={
                         "data": [
                             {
-                                "x": historical.confirmed.tolist(),
-                                "y": dates,
-                                "orientation": "h",
-                                "type": "bar",
+                                "x": dates,
+                                "y": historical.confirmed.tolist(),
+                                "type": "scatter",
+                                "marker": {"color": "rgb(255, 170, 0)"},
                                 "name": "Confirmed Cases",
+                                "trendline": "ols",
                             },
                         ],
                         "layout": {
-                            "title": "Динамика с 01.03.2020",
                             "height": "700",
                             "paper_bgcolor": "#22252b",
                             "plot_bgcolor": "rgba(0,0,0,0)",
