@@ -58,6 +58,7 @@ h1, h2, h3, h4, h5, h6, label, p {
 }
 @media (max-width: 800px) {
   .dashboard {
+    grid-template-columns: 100vw;
     grid-template-areas:    "header"
 			    "main_col"	
 			    "left_col"	
