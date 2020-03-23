@@ -67,10 +67,11 @@ fig = px.scatter_mapbox(
     center={"lat": 48.0196, "lon": 66.9237},
     opacity=0.7,
     height=600,
+    color_discrete_sequence=["rgba(255,0,0,.7)"],
 )
 
 
-fig.update_layout(mapbox_style="carto-darkmatter")
+fig.update_layout(mapbox_style="dark", mapbox_accesstoken=server.config["MAPBOX_TOKEN"])
 fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 app = dash.Dash(

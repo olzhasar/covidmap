@@ -11,3 +11,4 @@ class Config(object):
         "DATABASE_URL", "sqlite:///" + os.path.join(BASEDIR, "db.sqlite3")
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
