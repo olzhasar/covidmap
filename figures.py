@@ -7,7 +7,6 @@ map_fig = px.scatter_mapbox(
     current_data,
     lat="location.latitude",
     lon="location.longitude",
-    text="location.name",
     hover_name="location.name",
     hover_data=["confirmed", "recovered", "fatal"],
     labels={
