@@ -60,7 +60,7 @@ app.layout = html.Div(
                 html.Div(
                     children=[
                         html.P("Последнее обновление"),
-                        html.H3("24.02.2020 20:31", className="card-subtitle"),
+                        html.H3("24.02.2020 21:56", className="card-subtitle"),
                     ],
                     className="card is-hidden-mobile",
                 ),
