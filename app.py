@@ -53,7 +53,7 @@ app.layout = html.Div(
                 html.Div(
                     children=[
                         html.H2(summary.fatal, className="card-title"),
-                        html.H3("Фатальных исходов", className="card-subtitle"),
+                        html.H3("Летальных исходов", className="card-subtitle"),
                     ],
                     className="card",
                 ),
@@ -76,9 +76,11 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     children=[
+                        html.H4(
+                            "Сайт covidmap.kz создан исключительно в ознакомительных целях",
+                        ),
                         html.P(
-                            "Интерактивная карта заражённости коронавирусом COVID-19 в Казахстане",
-                            className="main-title",
+                            "Данные о зарегистрированных случаях берутся из открытых источников и обновляются по мере возможности. В связи с этим, данные на сайте могут иметь расхождение с реальными",
                         ),
                     ],
                     className="box",
