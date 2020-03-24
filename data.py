@@ -29,7 +29,7 @@ summary = current_data[["confirmed", "recovered", "fatal"]].sum()
 historical_data = df[["date", "confirmed", "recovered", "fatal"]].groupby("date").sum()
 historical_data.index = pd.to_datetime(historical_data.index)
 
-start = date(year=2020, month=3, day=1)
+start = df.date.min()
 end = df.date.max()
 date_range = pd.date_range(start, end)
 
