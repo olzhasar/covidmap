@@ -35,5 +35,7 @@ date_range = pd.date_range(start, end)
 
 historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
 
-table_data = current_data[["location.name", "confirmed", "recovered", "fatal"]]
+table_data = current_data[
+    ["location.name", "confirmed", "recovered", "fatal"]
+].sort_values("confirmed", ascending=False)
 table_data.columns = ["Регион", "Зарегистрированных", "Выздоровевших", "Смертей"]
