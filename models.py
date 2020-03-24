@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from server import db
 
@@ -21,6 +21,7 @@ class CaseData(db.Model):
     confirmed = db.Column(db.Integer, nullable=False)
     recovered = db.Column(db.Integer, default=0)
     fatal = db.Column(db.Integer, default=0)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f"<CaseData from {self.date} - {self.location.name}>"
