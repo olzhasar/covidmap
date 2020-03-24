@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 from figures import get_figures
-from server import server
+from server import server, cache
 
 app = dash.Dash(
     "COVID-19 Map Kazakhstan",
@@ -16,6 +16,7 @@ app.title = "Карта коронавирусной инфекции - Каза
 app.scripts.serve_locally = True
 
 
+@cache.memoize()
 def render_layout():
     (
         chart_fig,

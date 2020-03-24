@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_caching import Cache
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8,6 +9,8 @@ from config import Config
 
 server = Flask(__name__)
 server.config.from_object(Config)
+
+cache = Cache(server)
 
 admin = Admin(server, name="covidmap", template_mode="bootstrap3", url="/manage1618")
 
