@@ -37,7 +37,8 @@ def get_historical_data():
     end = df.index.max()
     date_range = pd.date_range(start, end)
 
-    df = df.sort_index().reindex(date_range, method="ffill")
+    df.sort_index(inplace=True)
+    df = df.reindex(date_range, method="ffill").cumsum()
     df.fillna(inplace=True, value=0)
 
     return df
