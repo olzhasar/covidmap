@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 from figures import get_figures
-from server import server, cache
+from server import cache, server
 
 app = dash.Dash(
     "COVID-19 Map Kazakhstan",
@@ -11,7 +11,9 @@ app = dash.Dash(
     meta_tags=[
         {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
     ],
+    external_scripts=["https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"],
 )
+
 app.title = "Карта коронавирусной инфекции - Казахстан"
 app.scripts.serve_locally = True
 
