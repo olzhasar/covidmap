@@ -12,3 +12,4 @@ class Config(object):
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+    MAPBOX_STYLE_URL = os.getenv("MAPBOX_STYLE_URL", "dark")

@@ -7,6 +7,7 @@ map_fig = px.scatter_mapbox(
     current_data,
     lat="location.latitude",
     lon="location.longitude",
+    text="location.name",
     hover_name="location.name",
     hover_data=["confirmed", "recovered", "fatal"],
     labels={
@@ -16,7 +17,6 @@ map_fig = px.scatter_mapbox(
     },
     size="confirmed",
     zoom=4,
-    mapbox_style="dark",
     center={"lat": 48.0196, "lon": 66.9237},
     opacity=0.7,
     height=700,
@@ -28,7 +28,10 @@ map_fig.data[
 ].hovertemplate = "<b>%{hovertext}</b><br><br>Зарегистрированных: %{customdata[0]}<br>Выздоровевших: %{customdata[1]}<br>Смертей: %{customdata[2]}"
 
 map_fig.update_layout(
-    mapbox_accesstoken=server.config["MAPBOX_TOKEN"],
+    mapbox=dict(
+        accesstoken=server.config["MAPBOX_TOKEN"],
+        style=server.config["MAPBOX_STYLE_URL"],
+    ),
     hoverlabel={
         "bgcolor": "#1a1c23",
         "bordercolor": "#bdbdbd",
