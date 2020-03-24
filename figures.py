@@ -16,11 +16,12 @@ map_fig = px.scatter_mapbox(
         "fatal": "Смертей",
     },
     size="confirmed",
+    size_max=40,
     zoom=4,
     center={"lat": 48.0196, "lon": 66.9237},
-    opacity=0.7,
+    opacity=0.4,
     height=700,
-    color_discrete_sequence=["rgba(230, 0, 0, .7)"],
+    color_discrete_sequence=["rgb(230, 0, 0)"],
 )
 
 map_fig.data[
