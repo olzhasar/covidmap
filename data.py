@@ -37,3 +37,9 @@ table_data = current_data[
     ["location.name", "confirmed", "recovered", "fatal"]
 ].sort_values("confirmed", ascending=False)
 table_data.columns = ["Регион", "Зарегистрированных", "Выздоровевших", "Смертей"]
+
+updated_at = (
+    CaseData.query.order_by(CaseData.updated_at.desc())
+    .first()
+    .updated_at.strftime("%d-%m-%Y %H:%M")
+)

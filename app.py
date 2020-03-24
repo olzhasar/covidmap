@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 
-from data import summary, table_data
+from data import summary, table_data, updated_at
 from figures import chart_fig, map_fig
 from server import server
 
@@ -61,7 +61,7 @@ app.layout = html.Div(
                 html.Div(
                     children=[
                         html.P("Последнее обновление"),
-                        html.H3("24.02.2020 23:35", className="card-subtitle"),
+                        html.H3(updated_at, className="card-subtitle"),
                     ],
                     className="card is-hidden-mobile",
                 ),
