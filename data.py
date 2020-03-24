@@ -1,4 +1,5 @@
 import pandas as pd
+from pytz import timezone
 
 from server import CaseData
 
@@ -41,5 +42,6 @@ table_data.columns = ["Регион", "Зарегистрированных", "�
 updated_at = (
     CaseData.query.order_by(CaseData.updated_at.desc())
     .first()
-    .updated_at.strftime("%d-%m-%Y %H:%M")
+    .updated_at.astimezone(timezone("Asia/Almaty"))
+    .strftime("%d-%m-%Y %H:%M")
 )
