@@ -9,7 +9,7 @@ from config import Config
 server = Flask(__name__)
 server.config.from_object(Config)
 
-admin = Admin(server, name="covidmap", template_mode="bootstrap3")
+admin = Admin(server, name="covidmap", template_mode="bootstrap3", url="/manage1618")
 
 db = SQLAlchemy(server)
 migrate = Migrate(server, db)
