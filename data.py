@@ -3,45 +3,49 @@ from pytz import timezone
 
 from server import CaseData
 
-query = CaseData.query.join(CaseData.location).values(
-    "date",
-    "confirmed",
-    "recovered",
-    "fatal",
-    "location.name",
-    "location.latitude",
-    "location.longitude",
-)
-df = pd.DataFrame(query)
 
-current_data = (
-    df.drop("date", axis=1)
-    .groupby(["location.name", "location.latitude", "location.longitude"])
-    .sum()
-    .reset_index()
-)
+def get_data():
+    query = CaseData.query.join(CaseData.location).values(
+        "date",
+        "confirmed",
+        "recovered",
+        "fatal",
+        "location.name",
+        "location.latitude",
+        "location.longitude",
+    )
+    df = pd.DataFrame(query)
 
+    current_data = (
+        df.drop("date", axis=1)
+        .groupby(["location.name", "location.latitude", "location.longitude"])
+        .sum()
+        .reset_index()
+    )
 
-summary = current_data[["confirmed", "recovered", "fatal"]].sum()
+    summary = current_data[["confirmed", "recovered", "fatal"]].sum()
 
+    historical_data = (
+        df[["date", "confirmed", "recovered", "fatal"]].groupby("date").sum()
+    )
+    historical_data.index = pd.to_datetime(historical_data.index)
 
-historical_data = df[["date", "confirmed", "recovered", "fatal"]].groupby("date").sum()
-historical_data.index = pd.to_datetime(historical_data.index)
+    start = df.date.min()
+    end = df.date.max()
+    date_range = pd.date_range(start, end)
 
-start = df.date.min()
-end = df.date.max()
-date_range = pd.date_range(start, end)
+    historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
 
-historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
+    table_data = current_data[
+        ["location.name", "confirmed", "recovered", "fatal"]
+    ].sort_values("confirmed", ascending=False)
+    table_data.columns = ["Регион", "Зарегистрированных", "Выздоровевших", "Смертей"]
 
-table_data = current_data[
-    ["location.name", "confirmed", "recovered", "fatal"]
-].sort_values("confirmed", ascending=False)
-table_data.columns = ["Регион", "Зарегистрированных", "Выздоровевших", "Смертей"]
+    updated_at = (
+        CaseData.query.order_by(CaseData.updated_at.desc())
+        .first()
+        .updated_at.astimezone(timezone("Asia/Almaty"))
+        .strftime("%d-%m-%Y %H:%M")
+    )
 
-updated_at = (
-    CaseData.query.order_by(CaseData.updated_at.desc())
-    .first()
-    .updated_at.astimezone(timezone("Asia/Almaty"))
-    .strftime("%d-%m-%Y %H:%M")
-)
+    return current_data, historical_data, table_data, summary, updated_at
