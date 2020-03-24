@@ -1,10 +1,10 @@
 import plotly.express as px
 
-from data import dates, df, historical
+from data import current_data, historical_data
 from server import server
 
 map_fig = px.scatter_mapbox(
-    df,
+    current_data,
     lat="location.latitude",
     lon="location.longitude",
     hover_name="location.name",
@@ -40,8 +40,8 @@ map_fig.update_layout(
 
 
 chart_fig = px.bar(
-    x=dates,
-    y=historical.confirmed.tolist(),
+    x=historical_data.index,
+    y=historical_data.confirmed,
     color_discrete_sequence=["rgba(255, 170, 0, .7)"],
     height=700,
 )

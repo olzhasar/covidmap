@@ -2,8 +2,9 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from server import server
+from data import summary
 from figures import chart_fig, map_fig
+from server import server
 
 app = dash.Dash(
     "COVID-19 Map Kazakhstan",
@@ -35,7 +36,7 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     children=[
-                        html.H2("58", className="card-title danger"),
+                        html.H2(summary.confirmed, className="card-title danger"),
                         html.H3(
                             "Зарегистрированных случаев", className="card-subtitle",
                         ),
@@ -44,21 +45,21 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     children=[
-                        html.H2("0", className="card-title success"),
+                        html.H2(summary.recovered, className="card-title success"),
                         html.H3("Выздоровевших", className="card-subtitle"),
                     ],
                     className="card",
                 ),
                 html.Div(
                     children=[
-                        html.H2("0", className="card-title"),
+                        html.H2(summary.fatal, className="card-title"),
                         html.H3("Фатальных исходов", className="card-subtitle"),
                     ],
                     className="card",
                 ),
                 html.Div(
                     children=[
-                        html.P("Данные обновлены"),
+                        html.P("Последнее обновление"),
                         html.H3("23.03.2020 23:17", className="card-subtitle"),
                     ],
                     className="card is-hidden-mobile",
