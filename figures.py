@@ -47,7 +47,7 @@ chart_fig = px.bar(
     x=historical_data.index,
     y=historical_data.confirmed,
     color_discrete_sequence=["rgba(255, 170, 0, .7)"],
-    height=700,
+    height=400,
 )
 chart_fig.update_layout(
     paper_bgcolor="#22252b",

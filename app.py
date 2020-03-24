@@ -1,8 +1,9 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 
-from data import summary
+from data import summary, table_data
 from figures import chart_fig, map_fig
 from server import server
 
@@ -69,7 +70,23 @@ app.layout = html.Div(
         ),
         html.Div(children=[dcc.Graph(id="map", figure=map_fig),], className="main-col"),
         html.Div(
-            children=[dcc.Graph(id="dynamics-graph", figure=chart_fig),],
+            children=[
+                dash_table.DataTable(
+                    id="cases-table",
+                    columns=[{"name": i, "id": i} for i in table_data.columns],
+                    data=table_data.to_dict("records"),
+                    style_header={"fontWeight": "700",},
+                    style_cell={
+                        "backgroundColor": "#22252b",
+                        "color": "#bdbdbd",
+                        "border": "2px solid #1a1c23",
+                        "textAlign": "left",
+                        "fontFamily": "'Roboto Slabe', sans-serif",
+                        "padding": "5px",
+                    },
+                ),
+                dcc.Graph(id="dynamics-graph", figure=chart_fig),
+            ],
             className="right-col",
         ),
         html.Div(

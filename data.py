@@ -33,6 +33,7 @@ start = df.date.min()
 end = df.date.max()
 date_range = pd.date_range(start, end)
 
-historical_data = (
-    historical_data.reindex(date_range).fillna(value=0).cumsum()
-)
+historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
+
+table_data = current_data[["location.name", "confirmed", "recovered", "fatal"]]
+table_data.columns = ["Регион", "Зарегистрированных", "Выздоровевших", "Смертей"]
