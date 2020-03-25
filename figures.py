@@ -58,6 +58,7 @@ def get_figures():
         height=400,
     )
     chart_fig.update_layout(
+        dragmode=False,
         paper_bgcolor="#22252b",
         plot_bgcolor="rgba(0,0,0,0)",
         hoverlabel={
