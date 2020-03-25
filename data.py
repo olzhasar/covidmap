@@ -1,5 +1,4 @@
 import pandas as pd
-from pytz import timezone
 
 from server import CaseData
 
@@ -36,16 +35,15 @@ def get_data():
 
     historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
 
-    table_data = current_data[
-        ["location.name", "confirmed"]
-    ].sort_values("confirmed", ascending=False)
+    table_data = current_data[["location.name", "confirmed"]].sort_values(
+        "confirmed", ascending=False
+    )
     table_data.columns = ["Регион", "Случаев"]
 
     updated_at = (
         CaseData.query.order_by(CaseData.updated_at.desc())
         .first()
-        .updated_at.astimezone(timezone("Asia/Almaty"))
-        .strftime("%d-%m-%Y %H:%M")
+        .updated_at.strftime("%d-%m-%Y %H:%M")
     )
 
     return current_data, historical_data, table_data, summary, updated_at
