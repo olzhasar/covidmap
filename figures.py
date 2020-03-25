@@ -22,7 +22,7 @@ def get_figures():
         },
         size="confirmed",
         size_max=40,
-        zoom=4,
+        zoom=3.7,
         center={"lat": 48.0196, "lon": 66.9237},
         opacity=0.4,
         height=700,
