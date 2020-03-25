@@ -51,7 +51,7 @@ def get_figures():
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
     )
 
-    chart_fig = px.bar(
+    chart_fig = px.line(
         x=historical_data.index,
         y=historical_data.confirmed,
         color_discrete_sequence=["rgba(255, 170, 0, .7)"],
@@ -71,13 +71,14 @@ def get_figures():
         },
         grid=None,
         xaxis={
-            "title": "Дата",
+            "title": None,
             "showgrid": False,
             "nticks": 5,
-            "tickformat": "%d-%m-%Y",
+            "tickformat": "%d.%m.%y",
         },
         yaxis={"title": "Общее количество случаев", "showgrid": False},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
+        margin={"r": 20, "t": 20, "l": 20, "b": 20},
     )
 
     chart_fig.data[0].hovertemplate = '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b>'
