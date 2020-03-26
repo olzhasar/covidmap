@@ -76,7 +76,6 @@ def get_figures():
         y=historical_data.confirmed,
         color_discrete_sequence=["rgba(255, 170, 0, .7)"],
         height=400,
-        title="Динамика с 13.03.2020",
     )
     chart_fig.update_layout(
         dragmode=False,
@@ -98,9 +97,9 @@ def get_figures():
             "nticks": 5,
             "tickformat": "%d.%m.%y",
         },
-        yaxis={"title": None, "showgrid": False},
-        title={"x": 0.5},
+        yaxis={"title": "Общее количество случаев", "showgrid": False},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
+        margin={"r": 20, "t": 20, "l": 20, "b": 20},
     )
 
     chart_fig.data[0].hovertemplate = '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b>'
