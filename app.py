@@ -10,11 +10,15 @@ app = dash.Dash(
     server=server,
     meta_tags=[
         {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
+        {
+            "name": "description",
+            "content": "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений",
+        },
     ],
     external_scripts=["https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"],
 )
 
-app.title = "Карта коронавирусной инфекции - Казахстан"
+app.title = "Карта коронавирусной инфекции COVID-19 - Казахстан"
 app.scripts.serve_locally = True
 
 
