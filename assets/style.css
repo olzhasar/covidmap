@@ -71,11 +71,26 @@ h1, h2, h3, h4, h5, h6, label, p {
   .dashboard {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
-    grid-template-areas:    "header"
-			    "left_col"	
+    grid-template-areas:    "left_col"
 			    "main_col"	
 			    "right_col"	
 			    "footer"
+  }
+  .left-col {
+    grid-area: left_col;
+    grid-template-columns: 1fr 1fr 1fr;
+    display: grid;
+    grid-gap: 5px;
+  }
+  .card {
+    padding: .25rem;
+  }
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .card-subtitle {
+    font-size: .5rem;
   }
   .is-hidden-mobile {
     display: none;
