@@ -46,6 +46,7 @@ def get_figures():
                 opacity=.4,
                 size=current_data["confirmed"],
                 sizemin=5,
+                sizeref=2*current_data['confirmed'].max()/(9**2)
             ),
             text=current_data['confirmed'],
         )
