@@ -1,6 +1,7 @@
 import dash_html_components as html
 import dash_table
 import plotly.express as px
+import plotly.graph_objects as go
 
 from data import get_data
 from server import server
@@ -9,34 +10,55 @@ from server import server
 def get_figures():
     current_data, historical_data, table_data, summary, updated_at = get_data()
 
-    map_fig = px.scatter_mapbox(
-        current_data,
-        lat="location.latitude",
-        lon="location.longitude",
-        hover_name="location.name",
-        hover_data=["confirmed", "recovered", "fatal"],
-        labels={
-            "confirmed": "Зарегистрированных",
-            "recovered": "Выздоровевших",
-            "fatal": "Смертей",
-        },
-        size="confirmed",
-        size_max=40,
-        zoom=3.7,
-        center={"lat": 48.0196, "lon": 66.9237},
-        opacity=0.4,
-        height=700,
-        color_discrete_sequence=["rgb(230, 0, 0)"],
+    # map_fig = px.scatter_mapbox(
+    #     current_data,
+    #     lat="location.latitude",
+    #     lon="location.longitude",
+    #     hover_name="location.name",
+    #     hover_data=["confirmed", "recovered", "fatal"],
+    #     labels={
+    #         "confirmed": "Зарегистрированных",
+    #         "recovered": "Выздоровевших",
+    #         "fatal": "Смертей",
+    #     },
+    #     size="confirmed",
+    #     size_max=40,
+    #     zoom=3.7,
+    #     center={"lat": 48.0196, "lon": 66.9237},
+    #     opacity=0.4,
+    #     height=700,
+    #     color_discrete_sequence=["rgb(230, 0, 0)"],
+    # )
+
+    # map_fig.data[
+    #     0
+    # ].hovertemplate = "<b>%{hovertext}</b><br><br>Зарегистрированных: %{customdata[0]}<br>Выздоровевших: %{customdata[1]}<br>Смертей: %{customdata[2]}"
+
+    map_fig = go.Figure()
+
+    map_fig.add_trace(
+        go.Scattermapbox(
+            lat=current_data["location.latitude"],
+            lon=current_data["location.longitude"],
+            mode="markers",
+            marker=go.scattermapbox.Marker(
+                color="rgb(230,0,0)",
+                opacity=.4,
+                size=current_data["confirmed"],
+                sizemin=8,
+            ),
+            text=current_data['confirmed'],
+        )
     )
-
-    map_fig.data[
-        0
-    ].hovertemplate = "<b>%{hovertext}</b><br><br>Зарегистрированных: %{customdata[0]}<br>Выздоровевших: %{customdata[1]}<br>Смертей: %{customdata[2]}"
-
     map_fig.update_layout(
+        height=700,
         mapbox=dict(
             accesstoken=server.config["MAPBOX_TOKEN"],
+            bearing=0,
             style=server.config["MAPBOX_STYLE_URL"],
+            center=go.layout.mapbox.Center(lat=48.0196, lon=66.9237),
+            zoom=3,
+            pitch=0,
         ),
         hoverlabel={
             "bgcolor": "#1a1c23",
