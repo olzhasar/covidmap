@@ -16,7 +16,8 @@ h1, h2, h3, h4, h5, h6, label, p {
 
 .main-title {
   margin: 0;
-  padding: 30px;
+  padding: 15px;
+  font-size: 2rem;
 }
 
 .box {
