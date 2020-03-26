@@ -45,7 +45,7 @@ def get_figures():
                 color="rgb(230,0,0)",
                 opacity=.4,
                 size=current_data["confirmed"],
-                sizemin=8,
+                sizemin=5,
             ),
             text=current_data['confirmed'],
         )
