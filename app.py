@@ -14,6 +14,10 @@ app = dash.Dash(
             "name": "description",
             "content": "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений",
         },
+        {
+            "name": "google-site-verification",
+            "content": "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A",
+        },
     ],
     external_scripts=["https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"],
 )
