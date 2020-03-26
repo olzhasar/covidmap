@@ -32,9 +32,18 @@ def get_figures():
                 color="rgb(230,0,0)",
                 opacity=0.4,
                 size=current_data["confirmed"],
-                sizemin=5,
-                sizeref=2 * current_data["confirmed"].max() / (9 ** 2),
+                sizemin=10,
+                sizeref=2 * current_data["confirmed"].max() / (12 ** 2),
             ),
+        )
+    )
+    map_fig.add_trace(
+        go.Scattermapbox(
+            lat=current_data["location.latitude"],
+            lon=current_data["location.longitude"],
+            text=current_data["confirmed"].astype(str),
+            mode="text",
+            hoverinfo="none",
         )
     )
     map_fig.update_layout(
@@ -47,6 +56,7 @@ def get_figures():
             zoom=3.5,
             pitch=0,
         ),
+        showlegend=False,
         hoverlabel={
             "bgcolor": "#1a1c23",
             "bordercolor": "#bdbdbd",

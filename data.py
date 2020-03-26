@@ -20,6 +20,7 @@ def get_data():
         .groupby(["location.name", "location.latitude", "location.longitude"])
         .sum()
         .reset_index()
+        .sort_values("confirmed", ascending=False)
     )
 
     summary = current_data[["confirmed", "recovered", "fatal"]].sum()
