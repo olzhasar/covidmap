@@ -109,6 +109,9 @@ def get_figures():
         columns=[{"name": i, "id": i} for i in table_data.columns],
         data=table_data.to_dict("records"),
         style_header={"fontWeight": "700",},
+        row_selectable=False,
+        column_selectable=False,
+        editable=False,
         style_cell={
             "backgroundColor": "#22252b",
             "color": "#bdbdbd",

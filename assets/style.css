@@ -133,3 +133,9 @@ h1, h2, h3, h4, h5, h6, label, p {
 .modebar{
   display: none !important;
 }
+
+.dash-spreadsheet-container table {
+    --accent: rgba(230,0,0,.7) !important;
+    --selected-background: rgba(230,0,0,.7) !important;
+    --selected-color: #bdbdbd !important;
+}
