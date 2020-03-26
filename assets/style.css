@@ -68,6 +68,10 @@ h1, h2, h3, h4, h5, h6, label, p {
     font-size: 1rem;
   }
 
+  body {
+    background-color: #22252b;
+  }
+
   .dashboard {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
@@ -80,11 +84,12 @@ h1, h2, h3, h4, h5, h6, label, p {
   .left-col {
     grid-area: left_col;
     grid-template-columns: 1fr 1fr 1fr;
-    display: grid;
-    grid-gap: 5px;
+  }
+  .dashboard, .main-col, .left-col, .right-col {
+    grid-gap: 0;
   }
   .card {
-    padding: .25rem;
+    padding: .5rem;
   }
   .card-title {
     font-size: 1.75rem;

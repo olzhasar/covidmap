@@ -47,7 +47,7 @@ def get_figures():
         )
     )
     map_fig.update_layout(
-        height=500,
+        height=400,
         mapbox=dict(
             accesstoken=server.config["MAPBOX_TOKEN"],
             bearing=0,
