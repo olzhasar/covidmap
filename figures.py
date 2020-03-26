@@ -10,29 +10,13 @@ from server import server
 def get_figures():
     current_data, historical_data, table_data, summary, updated_at = get_data()
 
-    # map_fig = px.scatter_mapbox(
-    #     current_data,
-    #     lat="location.latitude",
-    #     lon="location.longitude",
-    #     hover_name="location.name",
-    #     hover_data=["confirmed", "recovered", "fatal"],
-    #     labels={
-    #         "confirmed": "Зарегистрированных",
-    #         "recovered": "Выздоровевших",
-    #         "fatal": "Смертей",
-    #     },
-    #     size="confirmed",
-    #     size_max=40,
-    #     zoom=3.7,
-    #     center={"lat": 48.0196, "lon": 66.9237},
-    #     opacity=0.4,
-    #     height=700,
-    #     color_discrete_sequence=["rgb(230, 0, 0)"],
-    # )
-
-    # map_fig.data[
-    #     0
-    # ].hovertemplate = "<b>%{hovertext}</b><br><br>Зарегистрированных: %{customdata[0]}<br>Выздоровевших: %{customdata[1]}<br>Смертей: %{customdata[2]}"
+    hovertemplate = (
+        "<b>  %{text[0]}  </b><br>"
+        + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{text[1]}</b>  зарегистрированных  "
+        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{text[2]}</b>  выздоровевших  "
+        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{text[3]}</b>  смертей  "
+        + "<extra></extra>"
+    )
 
     map_fig = go.Figure()
 
@@ -40,15 +24,17 @@ def get_figures():
         go.Scattermapbox(
             lat=current_data["location.latitude"],
             lon=current_data["location.longitude"],
+            text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
+            hoverinfo="text",
+            hovertemplate=hovertemplate,
             mode="markers",
             marker=go.scattermapbox.Marker(
                 color="rgb(230,0,0)",
-                opacity=.4,
+                opacity=0.4,
                 size=current_data["confirmed"],
                 sizemin=5,
-                sizeref=2*current_data['confirmed'].max()/(9**2)
+                sizeref=2 * current_data["confirmed"].max() / (9 ** 2),
             ),
-            text=current_data['confirmed'],
         )
     )
     map_fig.update_layout(
@@ -58,12 +44,13 @@ def get_figures():
             bearing=0,
             style=server.config["MAPBOX_STYLE_URL"],
             center=go.layout.mapbox.Center(lat=48.0196, lon=66.9237),
-            zoom=3,
+            zoom=3.5,
             pitch=0,
         ),
         hoverlabel={
             "bgcolor": "#1a1c23",
             "bordercolor": "#bdbdbd",
+            "align": "auto",
             "font": {
                 "family": "'Roboto Slab', sans-serif",
                 "color": "#bdbdbd",
