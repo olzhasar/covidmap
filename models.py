@@ -10,6 +10,9 @@ class Location(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     case_data = db.relationship("CaseData", backref="location", lazy="dynamic")
 
+    api_id = db.Column(db.Integer, index=True, unique=True)
+    api_name = db.Column(db.String(255), index=True, unique=True)
+
     def __repr__(self):
         return f"<Location {self.name}>"
 
