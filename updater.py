@@ -6,7 +6,7 @@ from sqlalchemy import func
 
 from server import db, server
 
-from models import CaseData  # isort:skip
+from models import CaseData, Location  # isort:skip
 
 
 def fetch_data():
@@ -54,9 +54,9 @@ def update_data():
     current_data = load_current_data()
     now, today = get_time_date()
 
-    def create(record):
+    def create(record, location_id):
         new = CaseData(
-            location_id=record["id"],
+            location_id=location_id,
             confirmed=record["infected"],
             recovered=record["recovered"],
             fatal=record["deaths"],
@@ -65,11 +65,13 @@ def update_data():
         db.session.add(new)
 
     for record in remote_data:
+        location_id = Location.query.filter_by(api_id=record["id"]).first().id
+
         current = current_data.get(record["id"])
         commit = False
 
         if not current:
-            create(record)
+            create(record, location_id)
             commit = True
         else:
             confirmed_diff = max(0, record["infected"] - current["confirmed"])
@@ -90,7 +92,7 @@ def update_data():
                     .first()
                 )
                 if not instance:
-                    create(record)
+                    create(record, location_id)
                 else:
                     instance.confirmed += confirmed_diff
                     instance.recovered += recovered_diff
