@@ -25,3 +25,5 @@ class Config(object):
     BASIC_AUTH_PASSWORD = os.getenv("AUTH_PASSWORD", "covidmap")
 
     ADMIN_URL = os.getenv("ADMIN_URL", "admin")
+
+    FETCH_URL = os.getenv("FETCH_URL", "https://api.covid19live.kz/v1/status")
