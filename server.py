@@ -1,3 +1,6 @@
+import atexit
+
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, Response, redirect
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView as BaseModelView
@@ -20,6 +23,17 @@ db = SQLAlchemy(server)
 migrate = Migrate(server, db)
 
 from models import CaseData, Location  # noqa E402 isort:skip
+
+from updater import update_data  # noqa E402 isort:skip
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    func=update_data, trigger="interval", minutes=server.config["FETCH_INTERVAL"]
+)
+scheduler.start()
+
+atexit.register(lambda: scheduler.shutdown())
 
 
 class AuthException(HTTPException):

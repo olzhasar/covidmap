@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import pytz
@@ -17,6 +18,8 @@ def fetch_data():
     if not response.status_code == 200:
         raise Exception("Cannot download data")
     data = response.json()["cities"]
+
+    logging.warning("Downloaded records json")
 
     return filter(not_null, data)
 
@@ -100,3 +103,4 @@ def update_data():
                     instance.updated_at = now
         if commit:
             db.session.commit()
+    logging.warning("Updated successfully")
