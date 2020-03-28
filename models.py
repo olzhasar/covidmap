@@ -13,6 +13,8 @@ class Location(db.Model):
     api_id = db.Column(db.Integer, index=True, unique=True)
     api_name = db.Column(db.String(255), index=True, unique=True)
 
+    minzdrav_name = db.Column(db.String(255), index=True, unique=True)
+
     def __repr__(self):
         return f"<Location {self.name}>"
 
