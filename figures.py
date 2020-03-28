@@ -47,13 +47,13 @@ def get_figures():
         )
     )
     map_fig.update_layout(
-        height=400,
+        height=350,
         mapbox=dict(
             accesstoken=server.config["MAPBOX_TOKEN"],
             bearing=0,
             style=server.config["MAPBOX_STYLE_URL"],
             center=go.layout.mapbox.Center(lat=48.0196, lon=66.9237),
-            zoom=3.3,
+            zoom=3,
             pitch=0,
         ),
         showlegend=False,
