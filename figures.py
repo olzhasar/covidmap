@@ -47,6 +47,16 @@ def get_figures():
     )
     map_fig.update_layout(
         height=350,
+        title={
+            "text": f"Данные обновлены: {updated_at}",
+            "x": 0.5,
+            "y": 0.98,
+            "font": {
+                "family": "'Roboto Slab', sans-serif",
+                "color": "#bdbdbd",
+                "size": 10,
+            },
+        },
         mapbox=dict(
             accesstoken=server.config["MAPBOX_TOKEN"],
             bearing=0,
@@ -126,7 +136,9 @@ def get_figures():
     chart_fig.update_layout(title={"text": "Динамика случаев с 13.03.20"})
 
     log_fig.update_layout(**chart_layout)
-    log_fig.update_layout(title={"text": "Динамика (<i>логарифм. шкала</i>)"}, yaxis_type="log")
+    log_fig.update_layout(
+        title={"text": "Динамика (<i>логарифм. шкала</i>)"}, yaxis_type="log"
+    )
 
     table = dash_table.DataTable(
         id="cases-table",
