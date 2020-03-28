@@ -5,23 +5,10 @@ import pytz
 import requests
 from sqlalchemy import func
 
+from fetchers.minzdrav import fetch_data
 from server import db, server
 
 from models import CaseData, Location  # isort:skip
-
-
-def fetch_data():
-    def not_null(record):
-        return record["infected"] > 0 or record["deaths"] > 0 or record["recovered"] > 0
-
-    response = requests.get(server.config["FETCH_URL"], verify=False)
-    if not response.status_code == 200:
-        raise Exception("Cannot download data")
-    data = response.json()["cities"]
-
-    logging.warning("Downloaded records json")
-
-    return filter(not_null, data)
 
 
 def load_current_data():
@@ -32,10 +19,10 @@ def load_current_data():
             func.sum(CaseData.confirmed),
             func.sum(CaseData.recovered),
             func.sum(CaseData.fatal),
-            "location.api_id",
+            "location.minzdrav_name",
         )
         .join(CaseData.location)
-        .group_by("location.api_id")
+        .group_by("location.minzdrav_name")
     )
 
     values_dict = {
@@ -60,47 +47,41 @@ def update_data():
     def create(record, location_id):
         new = CaseData(
             location_id=location_id,
-            confirmed=record["infected"],
+            confirmed=record["confirmed"],
             recovered=record["recovered"],
-            fatal=record["deaths"],
+            fatal=record["fatal"],
             updated_at=now,
         )
         db.session.add(new)
+        db.session.commit()
 
-    for record in remote_data:
-        location_id = Location.query.filter_by(api_id=record["id"]).first().id
+    for location_name, record in remote_data.items():
+        location_id = Location.query.filter_by(minzdrav_name=location_name).first().id
 
-        current = current_data.get(record["id"])
-        commit = False
+        current = current_data.get(location_name)
 
         if not current:
             create(record, location_id)
-            commit = True
         else:
-            confirmed_diff = max(0, record["infected"] - current["confirmed"])
-            # recovered_diff = max(0, record["recovered"] - current["recovered"])
-            recovered_diff = 0
-            fatal_diff = max(0, record["deaths"] - current["fatal"])
-            if any([confirmed_diff, recovered_diff, fatal_diff]):
-                commit = True
+            keys = ["confirmed", "recovered", "fatal"]
+            for k in keys:
+                record[k] = max(0, record[k] - current[k])
 
-                record["infected"] = confirmed_diff
-                record["recovered"] = recovered_diff
-                record["deaths"] = fatal_diff
+            if any(record[k] for k in keys):
 
                 instance = (
                     CaseData.query.filter_by(date=today)
                     .join(CaseData.location)
-                    .filter_by(api_id=record["id"])
+                    .filter_by(minzdrav_name=location_name)
                     .first()
                 )
                 if not instance:
                     create(record, location_id)
                 else:
-                    instance.confirmed += confirmed_diff
-                    instance.recovered += recovered_diff
-                    instance.fatal += fatal_diff
+                    instance.confirmed += record["confirmed"]
+                    instance.recovered += record["recovered"]
+                    instance.fatal += record["fatal"]
                     instance.updated_at = now
-        if commit:
-            db.session.commit()
-    logging.warning("Updated successfully")
+                    db.session.commit()
+
+    logging.info("Updated successfully")
