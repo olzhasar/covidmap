@@ -10,7 +10,7 @@ class Config(object):
     FLASK_ADMIN_SWATCH = "cerulean"
 
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL", "sqlite:///" + os.path.join(BASEDIR, "db.sqlite3")
+        "POSTGRES_URL", "postgresql://covidmap:covidmap@localhost:5432/covidmap"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
