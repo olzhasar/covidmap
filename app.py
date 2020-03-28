@@ -30,6 +30,7 @@ app.scripts.serve_locally = True
 def render_layout():
     (
         chart_fig,
+        log_fig,
         map_fig,
         table,
         confirmed_label,
@@ -90,7 +91,11 @@ def render_layout():
                 children=[dcc.Graph(id="map", figure=map_fig),], className="main-col",
             ),
             html.Div(
-                children=[table, dcc.Graph(id="dynamics-graph", figure=chart_fig),],
+                children=[
+                    table,
+                    dcc.Graph(id="linear-graph", figure=chart_fig),
+                    dcc.Graph(id="log-graph", figure=log_fig),
+                ],
                 className="right-col",
             ),
             html.Div(

@@ -70,18 +70,32 @@ def get_figures():
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
     )
 
+    chart_hov_template = (
+        '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>'
+    )
+
     chart_fig = go.Figure()
     chart_fig.add_trace(
         go.Scatter(
             x=historical_data.index,
             y=historical_data.confirmed,
             marker={"color": "rgba(255,170,0,0.7)"},
-            hovertemplate='%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>',
+            hovertemplate=chart_hov_template,
         )
     )
-    chart_fig.update_layout(
+
+    log_fig = go.Figure()
+    log_fig.add_trace(
+        go.Scatter(
+            x=historical_data.index,
+            y=historical_data.confirmed,
+            marker={"color": "rgba(255,170,0,0.7)"},
+            hovertemplate=chart_hov_template,
+        )
+    )
+
+    chart_layout = dict(
         dragmode=False,
-        title={"text": "Динамика с 13.03.2020", "x": 0.5},
         paper_bgcolor="#22252b",
         plot_bgcolor="rgba(0,0,0,0)",
         hoverlabel={
@@ -102,10 +116,17 @@ def get_figures():
             "tickformat": "%d/%m",
             "ticks": "outside",
         },
-        yaxis={"title": None, "showgrid": False, "zeroline": False,},
-        font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
-        margin={"r": 20, "t": 40, "l": 20, "b": 20},
+        yaxis={"showgrid": False, "zeroline": False},
+        font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd", "size": 10},
+        title={"x": 0.1, "y": 0.9},
+        margin={"r": 20, "t": 20, "l": 20, "b": 20},
     )
+
+    chart_fig.update_layout(**chart_layout)
+    chart_fig.update_layout(title={"text": "Линейный рост"})
+
+    log_fig.update_layout(**chart_layout)
+    log_fig.update_layout(title={"text": "Логарифмический рост"}, yaxis_type="log")
 
     table = dash_table.DataTable(
         id="cases-table",
@@ -120,7 +141,7 @@ def get_figures():
             "color": "#bdbdbd",
             "border": "2px solid #1a1c23",
             "textAlign": "left",
-            "fontFamily": "'Roboto Slabe', sans-serif",
+            "fontFamily": "'Roboto Slab', sans-serif",
             "padding": "5px",
         },
     )
@@ -131,6 +152,7 @@ def get_figures():
 
     return (
         chart_fig,
+        log_fig,
         map_fig,
         table,
         confirmed_label,
