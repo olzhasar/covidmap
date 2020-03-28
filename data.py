@@ -41,12 +41,11 @@ def get_data():
     )
     table_data.columns = ["Регион", "Случаев"]
 
-    last_modified = CaseData.query.order_by(CaseData.updated_at.desc()).first()
-    if last_modified:
-        updated_at = getattr(last_modified, "updated_at")
-        if updated_at:
-            updated_at = updated_at.strftime("%d-%m-%Y %H:%M")
-    else:
-        updated_at = ""
+    updated_at = (
+        CaseData.query.filter(CaseData.updated_at.isnot(None))
+        .order_by(CaseData.updated_at.desc())
+        .first()
+        .updated_at.strftime("%d-%m-%Y %H:%M")
+    )
 
     return current_data, historical_data, table_data, summary, updated_at
