@@ -51,6 +51,7 @@ def update_data():
             recovered=record["recovered"],
             fatal=record["fatal"],
             updated_at=now,
+            date=today,
         )
         db.session.add(new)
         db.session.commit()
