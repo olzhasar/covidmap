@@ -53,7 +53,7 @@ def get_figures():
             "y": 0.98,
             "font": {
                 "family": "'Roboto Slab', sans-serif",
-                "color": "#bdbdbd",
+                "color": "rgba(189,189,189,0.7)",
                 "size": 10,
             },
         },
