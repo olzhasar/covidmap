@@ -123,10 +123,10 @@ def get_figures():
     )
 
     chart_fig.update_layout(**chart_layout)
-    chart_fig.update_layout(title={"text": "Линейный рост"})
+    chart_fig.update_layout(title={"text": "Динамика случаев с 13.03.20"})
 
     log_fig.update_layout(**chart_layout)
-    log_fig.update_layout(title={"text": "Логарифмический рост"}, yaxis_type="log")
+    log_fig.update_layout(title={"text": "Динамика (<i>логарифм. шкала</i>)"}, yaxis_type="log")
 
     table = dash_table.DataTable(
         id="cases-table",
