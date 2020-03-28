@@ -26,5 +26,6 @@ class Config(object):
 
     ADMIN_URL = os.getenv("ADMIN_URL", "admin")
 
+    FETCH_ENABLED = os.getenv("FETCH_ENABLED", False)
     FETCH_URL = os.getenv("FETCH_URL")
     FETCH_INTERVAL = int(os.getenv("FETCH_INTERVAL", 10))

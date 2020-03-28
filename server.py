@@ -27,13 +27,14 @@ from models import CaseData, Location  # noqa E402 isort:skip
 from updater import update_data  # noqa E402 isort:skip
 
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(
-    func=update_data, trigger="interval", minutes=server.config["FETCH_INTERVAL"]
-)
-scheduler.start()
+if server.config["FETCH_ENABLED"]:
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(
+        func=update_data, trigger="interval", minutes=server.config["FETCH_INTERVAL"]
+    )
+    scheduler.start()
 
-atexit.register(lambda: scheduler.shutdown())
+    atexit.register(lambda: scheduler.shutdown())
 
 
 class AuthException(HTTPException):
