@@ -87,11 +87,7 @@ def render_layout():
                 className="left-col",
             ),
             html.Div(
-                children=[
-                    dcc.Graph(id="map", figure=map_fig),
-                    html.Div(className="box is-hidden-mobile"),
-                ],
-                className="main-col",
+                children=[dcc.Graph(id="map", figure=map_fig),], className="main-col",
             ),
             html.Div(
                 children=[table, dcc.Graph(id="dynamics-graph", figure=chart_fig),],

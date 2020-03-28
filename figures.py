@@ -1,6 +1,5 @@
 import dash_html_components as html
 import dash_table
-import plotly.express as px
 import plotly.graph_objects as go
 
 from data import get_data
@@ -71,14 +70,18 @@ def get_figures():
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
     )
 
-    chart_fig = px.line(
-        x=historical_data.index,
-        y=historical_data.confirmed,
-        color_discrete_sequence=["rgba(255, 170, 0, .7)"],
-        height=400,
+    chart_fig = go.Figure()
+    chart_fig.add_trace(
+        go.Scatter(
+            x=historical_data.index,
+            y=historical_data.confirmed,
+            marker={"color": "rgba(255,170,0,0.7)"},
+            hovertemplate='%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>',
+        )
     )
     chart_fig.update_layout(
         dragmode=False,
+        title={"text": "Динамика с 13.03.2020", "x": 0.5},
         paper_bgcolor="#22252b",
         plot_bgcolor="rgba(0,0,0,0)",
         hoverlabel={
@@ -94,15 +97,15 @@ def get_figures():
         xaxis={
             "title": None,
             "showgrid": False,
-            "nticks": 5,
-            "tickformat": "%d.%m.%y",
+            "showline": False,
+            "nticks": 10,
+            "tickformat": "%d/%m",
+            "ticks": "outside",
         },
-        yaxis={"title": "Общее количество случаев", "showgrid": False},
+        yaxis={"title": None, "showgrid": False, "zeroline": False,},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
-        margin={"r": 20, "t": 20, "l": 20, "b": 20},
+        margin={"r": 20, "t": 40, "l": 20, "b": 20},
     )
-
-    chart_fig.data[0].hovertemplate = '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b>'
 
     table = dash_table.DataTable(
         id="cases-table",
