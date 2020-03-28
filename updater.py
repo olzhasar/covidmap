@@ -84,4 +84,4 @@ def update_data():
                     instance.updated_at = now
                     db.session.commit()
 
-    logging.info("Updated successfully")
+    logging.warning("Updated successfully")
