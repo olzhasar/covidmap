@@ -7,7 +7,7 @@ from server import server
 
 
 def get_figures():
-    current_data, historical_data, table_data, summary, updated_at = get_data()
+    current_data, historical_data, summary, updated_at = get_data()
 
     hovertemplate = (
         "<b>  %{text[0]}  </b><br>"
@@ -142,8 +142,15 @@ def get_figures():
 
     table = dash_table.DataTable(
         id="cases-table",
-        columns=[{"name": i, "id": i} for i in table_data.columns],
-        data=table_data.to_dict("records"),
+        data=current_data[["location.name", "confirmed", "increase"]].to_dict(
+            "records"
+        ),
+        columns=[
+            {"name": "Регион", "id": "location.name"},
+            {"name": "Случаев", "id": "confirmed"},
+            {"name": "Случаев", "id": "increase"},
+        ],
+        merge_duplicate_headers=True,
         style_header={"fontWeight": "700",},
         row_selectable=False,
         column_selectable=False,
@@ -152,10 +159,14 @@ def get_figures():
             "backgroundColor": "#22252b",
             "color": "#bdbdbd",
             "border": "2px solid #1a1c23",
-            "textAlign": "left",
+            "textAlign": "right",
             "fontFamily": "'Roboto Slab', sans-serif",
             "padding": "5px",
         },
+        style_cell_conditional=[
+            {"if": {"column_id": "location.name"}, "textAlign": "left",},
+            {"if": {"column_id": "increase"}, "color": "rgb(140,140,140)",},
+        ],
     )
     confirmed_label = html.H2(summary.confirmed, className="card-title danger")
     recovered_label = html.H2(summary.recovered, className="card-title success")

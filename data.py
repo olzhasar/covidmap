@@ -16,6 +16,13 @@ def get_data():
     )
     df = pd.DataFrame(query)
 
+    increase_series = df.drop(
+        ["fatal", "location.latitude", "location.longitude"], axis=1
+    ).set_index(["date", "location.name"])
+    increase_series = increase_series.loc[
+        increase_series.index.get_level_values(0)[-1]
+    ]["confirmed"]
+
     current_data = (
         df.drop("date", axis=1)
         .groupby(["location.name", "location.latitude", "location.longitude"])
@@ -23,6 +30,20 @@ def get_data():
         .reset_index()
         .sort_values("confirmed", ascending=False)
     )
+
+    current_data = current_data.merge(
+        increase_series.rename("increase"),
+        how="left",
+        left_on="location.name",
+        right_on="location.name",
+    )
+
+    def get_increase_str(x):
+        if x > 0:
+            return f"+{int(x)}"
+        return None
+
+    current_data["increase"] = current_data["increase"].apply(get_increase_str)
 
     summary = current_data[["confirmed", "recovered", "fatal"]].sum()
 
@@ -37,11 +58,6 @@ def get_data():
 
     historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
 
-    table_data = current_data[["location.name", "confirmed"]].sort_values(
-        "confirmed", ascending=False
-    )
-    table_data.columns = ["Регион", "Случаев"]
-
     updated_at = (
         CaseData.query.filter(CaseData.updated_at.isnot(None))
         .order_by(CaseData.updated_at.desc())
@@ -50,4 +66,4 @@ def get_data():
         .strftime("%d-%m-%Y %H:%M")
     )
 
-    return current_data, historical_data, table_data, summary, updated_at
+    return current_data, historical_data, summary, updated_at
