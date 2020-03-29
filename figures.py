@@ -148,13 +148,10 @@ def get_figures():
         columns=[
             {"name": "Регион", "id": "location.name"},
             {"name": "Случаев", "id": "confirmed"},
-            {"name": "За сутки", "id": "increase"},
+            {"name": "За сегодня", "id": "increase"},
         ],
         merge_duplicate_headers=True,
-        style_header={"fontWeight": "700",},
-        row_selectable=False,
-        column_selectable=False,
-        editable=False,
+        style_header={"fontWeight": "700", "whiteSpace": "normal", "height": "auto",},
         style_data={"whiteSpace": "normal", "height": "auto",},
         style_cell={
             "backgroundColor": "#22252b",
@@ -170,6 +167,9 @@ def get_figures():
         style_data_conditional=[
             {"if": {"column_id": "increase"}, "color": "rgb(250,170,0,0.7)",},
         ],
+        editable=False,
+        row_selectable=False,
+        column_selectable=False,
     )
     confirmed_label = html.H2(summary.confirmed, className="card-title danger")
     recovered_label = html.H2(summary.recovered, className="card-title success")
