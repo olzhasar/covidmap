@@ -12,7 +12,7 @@ def get_figures():
     hovertemplate = (
         "<b>  %{text[0]}  </b><br>"
         + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{text[1]}</b>  зарегистрированных  "
-        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{text[2]}</b>  выздоровевших  "
+        + "<br>  <b style='color: rgb(112, 168, 0); font-size: 1.5rem; font-weight: 400'>%{text[2]}</b>  выздоровевших  "
         + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{text[3]}</b>  смертей  "
         + "<extra></extra>"
     )
