@@ -11,6 +11,6 @@ if __name__ == "__main__":
     atexit.register(lambda: scheduler.shutdown())
 
     scheduler.add_job(
-        func=update_data, trigger="interval", seconds=server.config["FETCH_INTERVAL"]
+        func=update_data, trigger="interval", minutes=server.config["FETCH_INTERVAL"]
     )
     scheduler.start()
