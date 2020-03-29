@@ -1,8 +1,6 @@
-import logging
 from datetime import datetime
 
 import pytz
-import requests
 from sqlalchemy import func
 
 from fetchers.minzdrav import fetch_data
@@ -44,6 +42,9 @@ def update_data():
     current_data = load_current_data()
     now, today = get_time_date()
 
+    updated_count = 0
+    created_count = 0
+
     def create(record, location_id):
         new = CaseData(
             location_id=location_id,
@@ -63,6 +64,7 @@ def update_data():
 
         if not current:
             create(record, location_id)
+            created_count += 1
         else:
             keys = ["confirmed", "recovered", "fatal"]
             for k in keys:
@@ -78,11 +80,15 @@ def update_data():
                 )
                 if not instance:
                     create(record, location_id)
+                    created_count += 1
                 else:
                     instance.confirmed += record["confirmed"]
                     instance.recovered += record["recovered"]
                     instance.fatal += record["fatal"]
                     instance.updated_at = now
                     db.session.commit()
+                    updated_count += 1
 
-    logging.warning("Updated successfully")
+    print(
+        f"{now.isoformat()}: created {created_count} records, updated {updated_count} records"
+    )
