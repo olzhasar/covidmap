@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import pytz
@@ -89,6 +90,6 @@ def update_data():
                     db.session.commit()
                     updated_count += 1
 
-    print(
+    logging.warning(
         f"{now.isoformat()}: created {created_count} records, updated {updated_count} records"
     )
