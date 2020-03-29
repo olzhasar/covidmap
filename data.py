@@ -1,4 +1,5 @@
 import pandas as pd
+import pytz
 
 from server import CaseData
 
@@ -45,7 +46,8 @@ def get_data():
         CaseData.query.filter(CaseData.updated_at.isnot(None))
         .order_by(CaseData.updated_at.desc())
         .first()
-        .updated_at.strftime("%d-%m-%Y %H:%M")
+        .updated_at.astimezone(pytz.timezone("Asia/Almaty"))
+        .strftime("%d-%m-%Y %H:%M")
     )
 
     return current_data, historical_data, table_data, summary, updated_at
