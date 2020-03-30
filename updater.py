@@ -1,11 +1,10 @@
-import logging
 from datetime import datetime
 
 import pytz
 from sqlalchemy import func
 
 from fetchers.minzdrav import fetch_data
-from server import db, server
+from server import db, log, server
 
 from models import CaseData, Location  # isort:skip
 
@@ -90,6 +89,7 @@ def update_data():
                     db.session.commit()
                     updated_count += 1
 
-    logging.warning(
-        f"{now.isoformat()}: created {created_count} records, updated {updated_count} records"
-    )
+    if created_count:
+        log.info(f"Created {created_count} records")
+    if updated_count:
+        log.info(f"Updated {updated_count} records")

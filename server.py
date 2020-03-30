@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, Response, redirect
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView as BaseModelView
@@ -8,6 +10,12 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import HTTPException
 
 from config import Config
+
+log = logging.getLogger()
+
+console = logging.StreamHandler()
+log.addHandler(console)
+log.setLevel(logging.INFO)
 
 server = Flask(__name__)
 server.config.from_object(Config)
