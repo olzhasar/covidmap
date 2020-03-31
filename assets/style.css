@@ -55,53 +55,32 @@ h1, h2, h3, h4, h5, h6, label, p {
   display: grid;
   grid-gap: 1rem;
   height: 100vh;
-  grid-template-rows: 1fr 84vh 1fr;
-  grid-template-columns: 1fr 4fr 2fr;
-  grid-template-areas:	  "header header header"
-			  "left_col main_col right_col"	
-			  "footer footer footer"
+  grid-template-rows: 1fr 4fr 4fr 1fr;
+  grid-template-columns: 1fr 6fr;
+  grid-template-areas:	  "header header"
+			  "summary main"
+			  "summary charts"
+			  "footer footer"
 }
 
-@media (max-width: 800px) {
-  .main-title {
-    padding: 0;
-    font-size: 1rem;
-  }
+.summary{
+  grid-area: summary;
+  display: grid;
+  grid-gap: 1rem;
+}
 
-  body {
-    margin: 0;
-    background-color: #22252b;
-  }
+.main {
+  grid-area: main;
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: 2fr 1fr;
+}
 
-  .dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:    "left_col"
-			    "main_col"	
-			    "right_col"	
-			    "header"
-			    "footer"
-  }
-  .left-col {
-    grid-area: left_col;
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-  .dashboard, .main-col, .left-col, .right-col {
-    grid-gap: 0;
-  }
-  .card {
-    padding: .5rem;
-  }
-  .card-title {
-    font-size: 1.75rem;
-  }
-
-  .card-subtitle {
-    font-size: .5rem;
-  }
-  .is-hidden-mobile {
-    display: none;
-  }
+.charts {
+  grid-area: charts;
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: 1fr 1fr;
 }
 
 .header {
@@ -112,22 +91,60 @@ h1, h2, h3, h4, h5, h6, label, p {
   grid-area: footer;
 }
 
-.left-col {
-  grid-area: left_col;
-  display: grid;
-  grid-gap: 1rem;
-}
+@media (max-width: 800px) {
+  .dashboard, .main, .charts {
+    grid-gap: 0;
+  }
 
-.main-col {
-  grid-area: main_col;
-  display: grid;
-}
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:    "summary"
+			    "main"	
+			    "charts"
+			    "header"
+			    "footer"
+  }
 
-.right-col {
-  grid-area: right_col;
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-rows: 3fr 2fr 2fr;
+  .summary {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  body {
+    margin: 0;
+    background-color: #22252b;
+  }
+
+  .main-title {
+    padding: 0;
+    font-size: 1rem;
+  }
+
+  .card {
+    padding: .5rem;
+  }
+
+  .card-title {
+    font-size: 1.75rem;
+  }
+
+  .card-subtitle {
+    font-size: .5rem;
+  }
+
+  .is-hidden-mobile {
+    display: none;
+  }
 }
 
 .modebar{

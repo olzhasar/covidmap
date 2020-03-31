@@ -85,18 +85,17 @@ def render_layout():
                         className="card is-hidden-mobile",
                     ),
                 ],
-                className="left-col",
+                className="summary",
             ),
             html.Div(
-                children=[dcc.Graph(id="map", figure=map_fig),], className="main-col",
+                children=[dcc.Graph(id="map", figure=map_fig), table,], className="main"
             ),
             html.Div(
                 children=[
-                    table,
                     dcc.Graph(id="linear-graph", figure=chart_fig),
                     dcc.Graph(id="log-graph", figure=log_fig),
                 ],
-                className="right-col",
+                className="charts",
             ),
             html.Div(
                 children=[
