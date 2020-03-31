@@ -111,13 +111,13 @@ h1, h2, h3, h4, h5, h6, label, p {
   }
 
   .main {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
   }
 
   .charts {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto auto auto;
   }
 
   body {
