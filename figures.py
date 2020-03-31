@@ -114,6 +114,7 @@ def get_figures():
         yaxis={"showgrid": False, "zeroline": False},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd", "size": 10},
         title={"x": 0.5, "y": 0.95},
+        height=350,
         margin={"r": 40, "t": 40, "l": 40, "b": 40},
     )
 
