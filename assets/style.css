@@ -92,11 +92,8 @@ h1, h2, h3, h4, h5, h6, label, p {
 }
 
 @media (max-width: 800px) {
-  .dashboard, .main, .charts {
-    grid-gap: 0;
-  }
-
   .dashboard {
+    grid-gap: 0;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     grid-template-areas:    "summary"
@@ -111,13 +108,11 @@ h1, h2, h3, h4, h5, h6, label, p {
   }
 
   .main {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    display: block;
   }
 
   .charts {
-    grid-template-columns: auto;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+    display: block;
   }
 
   body {
