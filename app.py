@@ -28,16 +28,7 @@ app.scripts.serve_locally = True
 
 @cache.memoize()
 def render_layout():
-    (
-        chart_fig,
-        log_fig,
-        map_fig,
-        table,
-        confirmed_label,
-        recovered_label,
-        fatal_label,
-        updated_at_label,
-    ) = get_figures()
+    map_fig, charts, table, labels = get_figures()
 
     layout = html.Div(
         children=[
@@ -59,7 +50,7 @@ def render_layout():
                 children=[
                     html.Div(
                         children=[
-                            confirmed_label,
+                            labels["confirmed"],
                             html.H3(
                                 "Зарегистрированных случаев", className="card-subtitle",
                             ),
@@ -68,20 +59,23 @@ def render_layout():
                     ),
                     html.Div(
                         children=[
-                            recovered_label,
+                            labels["recovered"],
                             html.H3("Выздоровевших", className="card-subtitle"),
                         ],
                         className="card",
                     ),
                     html.Div(
                         children=[
-                            fatal_label,
+                            labels["fatal"],
                             html.H3("Летальных исходов", className="card-subtitle"),
                         ],
                         className="card",
                     ),
                     html.Div(
-                        children=[html.P("Последнее обновление"), updated_at_label,],
+                        children=[
+                            html.P("Последнее обновление"),
+                            labels["updated_at"],
+                        ],
                         className="card is-hidden-mobile",
                     ),
                 ],
@@ -92,8 +86,10 @@ def render_layout():
             ),
             html.Div(
                 children=[
-                    dcc.Graph(id="linear-graph", figure=chart_fig),
-                    dcc.Graph(id="log-graph", figure=log_fig),
+                    dcc.Graph(figure=charts["cumulative_linear"]),
+                    dcc.Graph(figure=charts["cumulative_log"]),
+                    dcc.Graph(figure=charts["daily_bar"]),
+                    dcc.Graph(figure=charts["recovered_bar"]),
                 ],
                 className="charts",
             ),

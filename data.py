@@ -4,7 +4,7 @@ import pytz
 from server import CaseData
 
 
-def get_data():
+def load_df_from_db():
     query = CaseData.query.join(CaseData.location).values(
         "date",
         "confirmed",
@@ -14,7 +14,11 @@ def get_data():
         "location.latitude",
         "location.longitude",
     )
-    df = pd.DataFrame(query)
+    return pd.DataFrame(query)
+
+
+def get_data():
+    df = load_df_from_db()
 
     increase_series = df.drop(
         ["fatal", "location.latitude", "location.longitude"], axis=1
@@ -56,7 +60,13 @@ def get_data():
     end = df.date.max()
     date_range = pd.date_range(start, end)
 
-    historical_data = historical_data.reindex(date_range).fillna(value=0).cumsum()
+    historical_data = historical_data.reindex(date_range).fillna(value=0)
+    cumulative_data = historical_data.cumsum()
+
+    recovered_data = historical_data["recovered"]
+
+    first_recovered_date = recovered_data[recovered_data > 0].index[0]
+    recovered_data = recovered_data.loc[first_recovered_date:]
 
     updated_at = (
         CaseData.query.filter(CaseData.updated_at.isnot(None))
@@ -66,4 +76,11 @@ def get_data():
         .strftime("%d-%m-%Y %H:%M")
     )
 
-    return current_data, historical_data, summary, updated_at
+    return (
+        current_data,
+        historical_data,
+        cumulative_data,
+        recovered_data,
+        summary,
+        updated_at,
+    )

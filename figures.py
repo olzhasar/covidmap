@@ -7,7 +7,14 @@ from server import server
 
 
 def get_figures():
-    current_data, historical_data, summary, updated_at = get_data()
+    (
+        current_data,
+        historical_data,
+        cumulative_data,
+        recovered_data,
+        summary,
+        updated_at,
+    ) = get_data()
 
     hovertemplate = (
         "<b>  %{text[0]}  </b><br>"
@@ -18,7 +25,6 @@ def get_figures():
     )
 
     map_fig = go.Figure()
-
     map_fig.add_trace(
         go.Scattermapbox(
             lat=current_data["location.latitude"],
@@ -83,27 +89,6 @@ def get_figures():
     chart_hov_template = (
         '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>'
     )
-
-    chart_fig = go.Figure()
-    chart_fig.add_trace(
-        go.Scatter(
-            x=historical_data.index,
-            y=historical_data.confirmed,
-            marker={"color": "rgba(255,170,0,0.7)"},
-            hovertemplate=chart_hov_template,
-        )
-    )
-
-    log_fig = go.Figure()
-    log_fig.add_trace(
-        go.Scatter(
-            x=historical_data.index,
-            y=historical_data.confirmed,
-            marker={"color": "rgba(255,170,0,0.7)"},
-            hovertemplate=chart_hov_template,
-        )
-    )
-
     chart_layout = dict(
         dragmode=False,
         paper_bgcolor="#22252b",
@@ -128,16 +113,62 @@ def get_figures():
         },
         yaxis={"showgrid": False, "zeroline": False},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd", "size": 10},
-        title={"x": 0.1, "y": 0.9},
-        margin={"r": 20, "t": 20, "l": 20, "b": 20},
+        title={"x": 0.5, "y": 0.95},
+        margin={"r": 40, "t": 40, "l": 40, "b": 40},
     )
 
-    chart_fig.update_layout(**chart_layout)
-    chart_fig.update_layout(title={"text": "Динамика случаев с 13.03.20"})
+    charts = {}
 
-    log_fig.update_layout(**chart_layout)
-    log_fig.update_layout(
-        title={"text": "Динамика (<i>логарифм. шкала</i>)"}, yaxis_type="log"
+    charts["cumulative_linear"] = go.Figure(layout=chart_layout)
+    charts["cumulative_linear"].add_trace(
+        go.Scatter(
+            x=cumulative_data.index,
+            y=cumulative_data.confirmed,
+            marker={"color": "rgba(255,170,0,0.7)"},
+            hovertemplate=chart_hov_template,
+        )
+    )
+    charts["cumulative_linear"].update_layout(
+        title={"text": "Всего случаев с 13.03.20"}
+    )
+
+    charts["cumulative_log"] = go.Figure(layout=chart_layout)
+    charts["cumulative_log"].add_trace(
+        go.Scatter(
+            x=cumulative_data.index,
+            y=cumulative_data.confirmed,
+            marker={"color": "rgba(255,170,0,0.7)"},
+            hovertemplate=chart_hov_template,
+        )
+    )
+    charts["cumulative_log"].update_layout(
+        title={"text": "Всего случаев (<i>логарифм. шкала</i>)"}, yaxis_type="log"
+    )
+
+    charts["daily_bar"] = go.Figure(layout=chart_layout)
+    charts["daily_bar"].add_trace(
+        go.Bar(
+            x=historical_data.index,
+            y=historical_data.confirmed,
+            marker={"color": "rgba(255,170,0,0.7)"},
+            hovertemplate=chart_hov_template,
+        )
+    )
+    charts["daily_bar"].update_layout(
+        title={"text": "Количество новых случаев по дням"}
+    )
+
+    charts["recovered_bar"] = go.Figure(layout=chart_layout)
+    charts["recovered_bar"].add_trace(
+        go.Bar(
+            x=recovered_data.index,
+            y=recovered_data,
+            marker={"color": "rgba(112,168,0,0.7)"},
+            hovertemplate=chart_hov_template,
+        )
+    )
+    charts["recovered_bar"].update_layout(
+        title={"text": "Количество выздоровевших по дням"}
     )
 
     table = dash_table.DataTable(
@@ -171,18 +202,12 @@ def get_figures():
         row_selectable=False,
         column_selectable=False,
     )
-    confirmed_label = html.H2(summary.confirmed, className="card-title danger")
-    recovered_label = html.H2(summary.recovered, className="card-title success")
-    fatal_label = html.H2(summary.fatal, className="card-title")
-    updated_at_label = html.H3(updated_at, className="card-subtitle")
 
-    return (
-        chart_fig,
-        log_fig,
-        map_fig,
-        table,
-        confirmed_label,
-        recovered_label,
-        fatal_label,
-        updated_at_label,
-    )
+    labels = {
+        "confirmed": html.H2(summary.confirmed, className="card-title danger"),
+        "recovered": html.H2(summary.recovered, className="card-title success"),
+        "fatal": html.H2(summary.fatal, className="card-title"),
+        "updated_at": html.H3(updated_at, className="card-subtitle"),
+    }
+
+    return map_fig, charts, table, labels
