@@ -34,5 +34,6 @@ def fetch_data():
 
     extract_from_div("last_info_covid_bl", "city_cov", "confirmed")
     extract_from_div("red_line_covid_bl", "city_cov", "recovered")
+    extract_from_div("deaths_bl", "city_cov", "fatal")
 
     return data
