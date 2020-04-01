@@ -72,6 +72,11 @@ def get_historical_data(end_date=None):
     )
     historical_data.index = pd.to_datetime(historical_data.index)
 
+    start = df.date.min()
+    end = df.date.max()
+    date_range = pd.date_range(start, end)
+
+    historical_data = historical_data.reindex(date_range).fillna(value=0)
     cumulative_data = historical_data.cumsum()
 
     recovered_data = historical_data["recovered"]
