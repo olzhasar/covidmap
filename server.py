@@ -55,11 +55,30 @@ class ModelView(BaseModelView):
         return redirect(auth.challenge())
 
 
+class CaseDataModelView(ModelView):
+    column_default_sort = [("date", True), ("updated_at", True)]
+    column_filters = ("location", "confirmed", "recovered", "fatal")
+
+    def after_model_change(self, form, model, is_created):
+        cache.clear()
+
+    def after_model_delete(self, model):
+        cache.clear()
+
+
+class LocationModelView(ModelView):
+    column_default_sort = "name"
+    form_excluded_columns = ("CaseData",)
+
+    def after_model_change(self, form, model, is_created):
+        cache.clear()
+
+
 admin = Admin(
     server,
     name="covidmap",
     template_mode="bootstrap3",
     url=f"/{server.config['ADMIN_URL']}",
 )
-admin.add_view(ModelView(Location, db.session))
-admin.add_view(ModelView(CaseData, db.session))
+admin.add_view(LocationModelView(Location, db.session))
+admin.add_view(CaseDataModelView(CaseData, db.session))

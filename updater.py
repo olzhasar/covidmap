@@ -4,7 +4,7 @@ import pytz
 from sqlalchemy import func
 
 from fetchers.minzdrav import fetch_data
-from server import db, log, server
+from server import cache, db, log, server
 
 from models import CaseData, Location  # isort:skip
 
@@ -93,3 +93,5 @@ def update_data():
         log.info(f"Created {created_count} records")
     if updated_count:
         log.info(f"Updated {updated_count} records")
+    if created_count or updated_count:
+        cache.clear()
