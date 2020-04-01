@@ -5,8 +5,11 @@ from server import CaseData, cache
 
 
 @cache.memoize()
-def load_df_from_db():
-    query = CaseData.query.join(CaseData.location).values(
+def load_df_from_db(end_date=None):
+    query = CaseData.query
+    if end_date:
+        query = query.filter(CaseData.date <= end_date)
+    query = query.join(CaseData.location).values(
         "date",
         "confirmed",
         "recovered",
@@ -19,8 +22,8 @@ def load_df_from_db():
 
 
 @cache.memoize()
-def get_current_data():
-    df = load_df_from_db()
+def get_current_data(end_date=None):
+    df = load_df_from_db(end_date)
 
     increase_series = df.drop(
         ["fatal", "location.latitude", "location.longitude"], axis=1
@@ -57,8 +60,8 @@ def get_current_data():
 
 
 @cache.memoize()
-def get_historical_data():
-    df = load_df_from_db()
+def get_historical_data(end_date=None):
+    df = load_df_from_db(end_date)
 
     historical_data = (
         df[["date", "confirmed", "recovered", "fatal"]].groupby("date").sum()
