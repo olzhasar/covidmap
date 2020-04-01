@@ -64,6 +64,16 @@ def get_summary():
 
 
 @cache.memoize()
+def get_date_range(end_date=None):
+    df = load_df_from_db(end_date)
+
+    start = df.date.min()
+    end = df.date.max()
+
+    return pd.date_range(start, end)
+
+
+@cache.memoize()
 def get_historical_data(end_date=None):
     df = load_df_from_db(end_date)
 
@@ -72,9 +82,7 @@ def get_historical_data(end_date=None):
     )
     historical_data.index = pd.to_datetime(historical_data.index)
 
-    start = df.date.min()
-    end = df.date.max()
-    date_range = pd.date_range(start, end)
+    date_range = get_date_range(end_date)
 
     historical_data = historical_data.reindex(date_range).fillna(value=0)
     cumulative_data = historical_data.cumsum()

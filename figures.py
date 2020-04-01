@@ -3,12 +3,13 @@ import dash_table
 import plotly.graph_objects as go
 
 from data import get_current_data, get_historical_data, get_summary, get_updated_at
-from server import server
+from server import cache, server
 
 
+@cache.memoize()
 def get_map(end_date=None):
 
-    current_data = get_current_data()
+    current_data = get_current_data(end_date)
     updated_at = get_updated_at()
 
     hovertemplate = (
@@ -33,7 +34,6 @@ def get_map(end_date=None):
                 opacity=0.4,
                 size=current_data["confirmed"],
                 sizemin=10,
-                sizeref=2 * current_data["confirmed"].max() / (12 ** 2),
             ),
         )
     )
