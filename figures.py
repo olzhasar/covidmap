@@ -2,13 +2,13 @@ import dash_html_components as html
 import dash_table
 import plotly.graph_objects as go
 
-from data import get_current_data, get_historical_data, get_updated_at
+from data import get_current_data, get_historical_data, get_summary, get_updated_at
 from server import server
 
 
-def get_figures():
-    current_data, summary = get_current_data()
-    historical_data, cumulative_data, recovered_data = get_historical_data()
+def get_map(end_date=None):
+
+    current_data = get_current_data()
     updated_at = get_updated_at()
 
     hovertemplate = (
@@ -80,6 +80,13 @@ def get_figures():
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
     )
+
+    return map_fig
+
+
+def get_charts():
+
+    historical_data, cumulative_data, recovered_data = get_historical_data()
 
     chart_hov_template = (
         '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>'
@@ -167,6 +174,12 @@ def get_figures():
         title={"text": "Количество выздоровевших по дням"}
     )
 
+    return charts
+
+
+def get_table():
+    current_data = get_current_data()
+
     table = dash_table.DataTable(
         id="cases-table",
         data=current_data[["location.name", "confirmed", "increase"]].to_dict(
@@ -199,6 +212,13 @@ def get_figures():
         column_selectable=False,
     )
 
+    return table
+
+
+def get_labels():
+    summary = get_summary()
+    updated_at = get_updated_at()
+
     labels = {
         "confirmed": html.H2(summary.confirmed, className="card-title danger"),
         "recovered": html.H2(summary.recovered, className="card-title success"),
@@ -206,4 +226,4 @@ def get_figures():
         "updated_at": html.H3(updated_at, className="card-subtitle"),
     }
 
-    return map_fig, charts, table, labels
+    return labels

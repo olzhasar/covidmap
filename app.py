@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from figures import get_figures
+from figures import get_charts, get_labels, get_map, get_table
 from server import cache, server
 
 external_scripts = []
@@ -32,7 +32,10 @@ app.scripts.serve_locally = True
 
 @cache.memoize()
 def render_layout():
-    map_fig, charts, table, labels = get_figures()
+    map_fig = get_map()
+    charts = get_charts()
+    table = get_table()
+    labels = get_labels()
 
     layout = html.Div(
         children=[

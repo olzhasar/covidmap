@@ -54,9 +54,13 @@ def get_current_data(end_date=None):
 
     current_data["increase"] = current_data["increase"].apply(get_increase_str)
 
-    summary = current_data[["confirmed", "recovered", "fatal"]].sum()
+    return current_data
 
-    return current_data, summary
+
+@cache.memoize()
+def get_summary():
+    current_data = get_current_data()
+    return current_data[["confirmed", "recovered", "fatal"]].sum()
 
 
 @cache.memoize()
