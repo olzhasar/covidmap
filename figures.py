@@ -2,19 +2,14 @@ import dash_html_components as html
 import dash_table
 import plotly.graph_objects as go
 
-from data import get_data
+from data import get_current_data, get_historical_data, get_updated_at
 from server import server
 
 
 def get_figures():
-    (
-        current_data,
-        historical_data,
-        cumulative_data,
-        recovered_data,
-        summary,
-        updated_at,
-    ) = get_data()
+    current_data, summary = get_current_data()
+    historical_data, cumulative_data, recovered_data = get_historical_data()
+    updated_at = get_updated_at()
 
     hovertemplate = (
         "<b>  %{text[0]}  </b><br>"
