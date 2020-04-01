@@ -29,3 +29,5 @@ class Config(object):
     FETCH_ENABLED = os.getenv("FETCH_ENABLED", False)
     FETCH_URL = os.getenv("FETCH_URL")
     FETCH_INTERVAL = int(os.getenv("FETCH_INTERVAL", 10))
+
+    GA_URL = "https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"

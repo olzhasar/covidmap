@@ -5,9 +5,14 @@ import dash_html_components as html
 from figures import get_figures
 from server import cache, server
 
+external_scripts = []
+if not server.debug:
+    external_scripts.append(server.config["GA_URL"])
+
 app = dash.Dash(
     "COVID-19 Map Kazakhstan",
     server=server,
+    external_scripts=external_scripts,
     meta_tags=[
         {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
         {
@@ -19,7 +24,6 @@ app = dash.Dash(
             "content": "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A",
         },
     ],
-    external_scripts=["https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"],
 )
 
 app.title = "Карта коронавирусной инфекции COVID-19 - Казахстан"
