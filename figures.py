@@ -34,6 +34,7 @@ def get_map(end_date=None):
                 opacity=0.4,
                 size=current_data["confirmed"],
                 sizemin=10,
+                sizeref=2 * current_data["confirmed"].max() / (12 ** 2),
             ),
         )
     )
