@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 
 from data import (
     get_current_data,
+    get_date_range,
     get_historical_data,
     get_max_confirmed,
     get_summary,
@@ -12,11 +13,11 @@ from data import (
 from server import cache, server
 
 
-@cache.memoize()
 def get_map(end_date=None):
 
     current_data = get_current_data(end_date)
     updated_at = get_updated_at()
+    date_range = get_date_range()
 
     max_confirmed = get_max_confirmed()
 
@@ -28,39 +29,45 @@ def get_map(end_date=None):
         + "<extra></extra>"
     )
 
-    map_fig = go.Figure()
+    def get_markers(end_date=None):
+        current_data = get_current_data(end_date)
 
-    if not current_data.empty:
-        map_fig.add_trace(
-            go.Scattermapbox(
-                lat=current_data["location.latitude"],
-                lon=current_data["location.longitude"],
-                text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
-                hoverinfo="text",
-                hovertemplate=hovertemplate,
-                mode="markers",
-                marker=go.scattermapbox.Marker(
-                    color="rgb(230,0,0)",
-                    opacity=0.4,
-                    size=current_data["confirmed"],
-                    sizemin=10,
-                    sizemode="area",
-                    sizeref=2 * max_confirmed / (60 ** 2),
-                ),
-            )
-        )
-        map_fig.add_trace(
-            go.Scattermapbox(
-                lat=current_data["location.latitude"],
-                lon=current_data["location.longitude"],
-                text=current_data["confirmed"].astype(str),
-                mode="text",
-                hoverinfo="none",
-            )
+        return go.Scattermapbox(
+            lat=current_data["location.latitude"],
+            lon=current_data["location.longitude"],
+            text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
+            hoverinfo="text",
+            hovertemplate=hovertemplate,
+            mode="markers",
+            marker=go.scattermapbox.Marker(
+                color="rgb(230,0,0)",
+                opacity=0.4,
+                size=current_data["confirmed"],
+                sizemin=10,
+                sizemode="area",
+                sizeref=2 * max_confirmed / (60 ** 2),
+            ),
         )
 
-    else:
-        map_fig.add_trace(go.Scattermapbox(lat=[], lon=[],))
+    def get_labels(end_date=None):
+        current_data = get_current_data(end_date)
+
+        return go.Scattermapbox(
+            lat=current_data["location.latitude"],
+            lon=current_data["location.longitude"],
+            text=current_data["confirmed"].astype(str),
+            mode="text",
+            hoverinfo="none",
+        )
+
+    frames = []
+
+    for dt in date_range:
+        frames.append(go.Frame(data=[get_markers(dt), get_labels(dt)]))
+
+    map_fig = go.Figure(
+        data=[get_markers(end_date), get_labels(end_date)], frames=frames,
+    )
 
     map_fig.update_layout(
         title={
@@ -94,6 +101,18 @@ def get_map(end_date=None):
         },
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
+        updatemenus=[
+            dict(
+                type="buttons",
+                buttons=[
+                    dict(
+                        label="Play",
+                        method="animate",
+                        args=[None, {"frame": {"duration": 500}}],
+                    )
+                ],
+            )
+        ],
     )
 
     return map_fig
