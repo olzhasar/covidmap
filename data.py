@@ -18,7 +18,10 @@ def load_df_from_db(end_date=None):
         "location.latitude",
         "location.longitude",
     )
-    return pd.DataFrame(query)
+    df = pd.DataFrame(query)
+    df.sort_values("date", inplace=True)
+
+    return df
 
 
 @cache.memoize()
