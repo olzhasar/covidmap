@@ -10,7 +10,7 @@ h1, h2, h3, h4, h5, h6, label, p {
   color: #bdbdbd;
 }
 
-.box, .card, .panel {
+.box, .card, .panel, .slider-wrapper {
   background-color: #22252b;
 }
 
@@ -51,9 +51,39 @@ h1, h2, h3, h4, h5, h6, label, p {
   color: rgb(112, 168, 0);
 }
 
-.map {
+.map-wrapper {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-gap: 1rem;
+}
+
+#map {
   height: 100%;
-  display: block;
+  position: relative;
+}
+
+#slider {
+  padding: 0 1rem 1rem 1rem !important;
+}
+
+.slider-wrapper {
+  text-align: center;
+}
+
+.rc-slider-track {
+  background-color: rgb(250,170,0);
+}
+
+.rc-slider-handle {
+  border: 2px solid rgb(250,170,0);
+}
+
+.rc-slider-dot-active {
+  border-color: rgb(250,170,0);
+}
+
+#launch-map-button {
+  margin-top: 1rem;
 }
 
 .dashboard {
@@ -120,7 +150,12 @@ h1, h2, h3, h4, h5, h6, label, p {
     margin-top: 1rem;
   }
 
-  .map {
+  .map-wrapper {
+    grid-gap: 0;
+    grid-template-rows: auto auto;
+  }
+
+  #map {
     height: 350px;
   }
 

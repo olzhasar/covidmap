@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 from data import get_date_range
 from figures import get_charts, get_labels, get_map, get_table
 from server import cache, server
+from utils import datetime_to_unix, get_marks, unix_to_datetime
 
 external_scripts = []
 if not server.debug:
@@ -93,13 +94,32 @@ def render_layout():
             ),
             html.Div(
                 children=[
-                    dcc.Graph(id="map", figure=map_fig),
+                    html.Div(
+                        [
+                            dcc.Graph(id="map", figure=map_fig),
+                            html.Div(
+                                [
+                                    html.P("", id="current-date"),
+                                    dcc.Slider(
+                                        id="slider",
+                                        step=86400,
+                                        min=datetime_to_unix(date_range[0]),
+                                        max=datetime_to_unix(date_range[-1]),
+                                        value=datetime_to_unix(date_range[-1]),
+                                        included=False,
+                                    ),
+                                ],
+                                className="slider-wrapper",
+                            ),
+                        ],
+                        className="map-wrapper",
+                    ),
                     table,
                     dcc.Interval(
                         id="map_timer",
                         interval=1500,
                         max_intervals=len(date_range),
-                        disabled=False,
+                        disabled=True,
                     ),
                 ],
                 className="main",
@@ -139,12 +159,22 @@ app.layout = render_layout
 
 
 @app.callback(
-    Output("map", "figure"), [Input("map_timer", "n_intervals")],
+    [Output("map", "figure"), Output("current-date", "children")],
+    [Input("slider", "value")],
 )
-def update_map(n_intervals):
-    i = n_intervals or 1
-    dt = date_range[i - 1]
-    return get_map(dt)
+def update_map(value):
+    dt = unix_to_datetime(value)
+    label = dt.strftime("%d.%m.%y")
+    return get_map(dt), label
+
+
+# @app.callback(
+#     Output("map", "figure"), [Input("map_timer", "n_intervals")],
+# )
+# def update_map(n_intervals):
+#     i = n_intervals or 1
+#     dt = date_range[i - 1]
+#     return get_map(dt)
 
 
 if __name__ == "__main__":

@@ -19,7 +19,8 @@ def load_df_from_db(end_date=None):
         "location.longitude",
     )
     df = pd.DataFrame(query)
-    df.sort_values("date", inplace=True)
+    if not df.empty:
+        df.sort_values("date", inplace=True)
 
     return df
 
@@ -27,6 +28,8 @@ def load_df_from_db(end_date=None):
 @cache.memoize()
 def get_current_data(end_date=None):
     df = load_df_from_db(end_date)
+    if df.empty:
+        return df
 
     increase_series = df.drop(
         ["fatal", "location.latitude", "location.longitude"], axis=1
@@ -57,7 +60,15 @@ def get_current_data(end_date=None):
 
     current_data["increase"] = current_data["increase"].apply(get_increase_str)
 
+    current_data = current_data[current_data.confirmed > 0]
+
     return current_data
+
+
+@cache.memoize()
+def get_max_confirmed():
+    current_data = get_current_data()
+    return current_data["confirmed"].max()
 
 
 @cache.memoize()

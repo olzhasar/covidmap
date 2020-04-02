@@ -2,14 +2,23 @@ import dash_html_components as html
 import dash_table
 import plotly.graph_objects as go
 
-from data import get_current_data, get_historical_data, get_summary, get_updated_at
+from data import (
+    get_current_data,
+    get_historical_data,
+    get_max_confirmed,
+    get_summary,
+    get_updated_at,
+)
 from server import cache, server
 
 
+@cache.memoize()
 def get_map(end_date=None):
 
     current_data = get_current_data(end_date)
     updated_at = get_updated_at()
+
+    max_confirmed = get_max_confirmed()
 
     hovertemplate = (
         "<b>  %{text[0]}  </b><br>"
@@ -20,33 +29,39 @@ def get_map(end_date=None):
     )
 
     map_fig = go.Figure()
-    map_fig.add_trace(
-        go.Scattermapbox(
-            lat=current_data["location.latitude"],
-            lon=current_data["location.longitude"],
-            text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
-            hoverinfo="text",
-            hovertemplate=hovertemplate,
-            mode="markers",
-            marker=go.scattermapbox.Marker(
-                color="rgb(230,0,0)",
-                opacity=0.4,
-                size=current_data["confirmed"],
-                sizemin=10,
-                sizemode="area",
-                sizeref=2 * current_data["confirmed"].max() / (60 ** 2),
-            ),
+
+    if not current_data.empty:
+        map_fig.add_trace(
+            go.Scattermapbox(
+                lat=current_data["location.latitude"],
+                lon=current_data["location.longitude"],
+                text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
+                hoverinfo="text",
+                hovertemplate=hovertemplate,
+                mode="markers",
+                marker=go.scattermapbox.Marker(
+                    color="rgb(230,0,0)",
+                    opacity=0.4,
+                    size=current_data["confirmed"],
+                    sizemin=10,
+                    sizemode="area",
+                    sizeref=2 * max_confirmed / (60 ** 2),
+                ),
+            )
         )
-    )
-    map_fig.add_trace(
-        go.Scattermapbox(
-            lat=current_data["location.latitude"],
-            lon=current_data["location.longitude"],
-            text=current_data["confirmed"].astype(str),
-            mode="text",
-            hoverinfo="none",
+        map_fig.add_trace(
+            go.Scattermapbox(
+                lat=current_data["location.latitude"],
+                lon=current_data["location.longitude"],
+                text=current_data["confirmed"].astype(str),
+                mode="text",
+                hoverinfo="none",
+            )
         )
-    )
+
+    else:
+        map_fig.add_trace(go.Scattermapbox(lat=[], lon=[],))
+
     map_fig.update_layout(
         title={
             "text": f"Данные обновлены: {updated_at}",
