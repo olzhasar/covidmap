@@ -6,7 +6,6 @@ from data import get_current_data, get_historical_data, get_summary, get_updated
 from server import cache, server
 
 
-@cache.memoize()
 def get_map(end_date=None):
 
     current_data = get_current_data(end_date)
@@ -49,7 +48,6 @@ def get_map(end_date=None):
         )
     )
     map_fig.update_layout(
-        height=350,
         title={
             "text": f"Данные обновлены: {updated_at}",
             "x": 0.5,

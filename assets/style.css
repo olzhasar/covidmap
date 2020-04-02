@@ -51,10 +51,15 @@ h1, h2, h3, h4, h5, h6, label, p {
   color: rgb(112, 168, 0);
 }
 
+.map {
+  height: 100%;
+  display: block;
+}
+
 .dashboard {
   display: grid;
   grid-gap: 1rem;
-  grid-template-rows: auto max-content auto auto;
+  grid-template-rows: auto auto auto auto;
   grid-template-columns: 1fr 6fr;
   grid-template-areas:	  "header header"
 			  "summary main"
@@ -113,6 +118,10 @@ h1, h2, h3, h4, h5, h6, label, p {
   .charts {
     display: block;
     margin-top: 1rem;
+  }
+
+  .map {
+    height: 350px;
   }
 
   body {
