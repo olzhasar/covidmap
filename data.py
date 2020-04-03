@@ -15,6 +15,7 @@ def load_df_from_db(end_date=None):
         "confirmed",
         "recovered",
         "fatal",
+        "location.id",
         "location.name",
         "location.latitude",
         "location.longitude",
@@ -41,7 +42,9 @@ def get_current_data(end_date=None):
 
     current_data = (
         df.drop("date", axis=1)
-        .groupby(["location.name", "location.latitude", "location.longitude"])
+        .groupby(
+            ["location.id", "location.name", "location.latitude", "location.longitude"]
+        )
         .sum()
         .reset_index()
         .sort_values("confirmed", ascending=False)

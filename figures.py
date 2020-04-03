@@ -1,5 +1,8 @@
+import json
+
 import dash_html_components as html
 import dash_table
+import pandas as pd
 import plotly.graph_objects as go
 
 from data import (
@@ -97,6 +100,39 @@ def get_map(end_date=None):
     )
 
     return map_fig
+
+
+def get_choropleth_map():
+
+    with open("geojson/regions.geo.json", "r") as f:
+        regions = json.load(f)
+
+    series = pd.Series([i ** 2 for i in range(1, 18)], index=range(1, 18))
+
+    current_data = get_current_data()
+
+    fig = go.Figure(
+        go.Choroplethmapbox(
+            geojson=regions,
+            locations=current_data['location.id'],
+            z=current_data['confirmed'],
+            colorscale="sunset",
+            zmin=0,
+            zmax=80,
+            marker_line_width=0,
+        )
+    )
+
+    fig.update_layout(
+        mapbox_accesstoken=server.config["MAPBOX_TOKEN"],
+        mapbox_style=server.config["MAPBOX_STYLE_URL"],
+        mapbox_zoom=3,
+        mapbox_center=go.layout.mapbox.Center(lat=48.0196, lon=66.9237),
+    )
+
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+    return fig
 
 
 def get_charts():

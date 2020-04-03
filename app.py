@@ -4,7 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from data import get_date_range_unix
-from figures import get_charts, get_labels, get_map, get_table
+from figures import get_charts, get_choropleth_map, get_labels, get_map, get_table
 from server import cache, server
 from utils import get_marks, unix_to_datetime
 
@@ -36,7 +36,7 @@ app.scripts.serve_locally = True
 def render_layout():
     date_range = get_date_range_unix()
 
-    map_fig = get_map()
+    map_fig = get_choropleth_map()
     charts = get_charts()
     table = get_table()
     labels = get_labels()
@@ -151,16 +151,6 @@ def render_layout():
 
 
 app.layout = render_layout
-
-
-@app.callback(
-    [Output("map", "figure"), Output("current-date", "children")],
-    [Input("slider", "value")],
-)
-def update_map(value):
-    dt = unix_to_datetime(value)
-    label = dt.strftime("%d.%m.%y")
-    return get_map(dt), label
 
 
 if __name__ == "__main__":
