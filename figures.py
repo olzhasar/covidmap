@@ -21,10 +21,10 @@ def get_map(end_date=None):
     max_confirmed = get_max_confirmed()
 
     hovertemplate = (
-        "<b>  %{text[0]}  </b><br>"
-        + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{text[1]}</b>  зарегистрированных  "
-        + "<br>  <b style='color: rgb(112, 168, 0); font-size: 1.5rem; font-weight: 400'>%{text[2]}</b>  выздоровевших  "
-        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{text[3]}</b>  смертей  "
+        "<b>  %{meta[0]}  </b><br>"
+        + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{meta[1]}</b>  зарегистрированных  "
+        + "<br>  <b style='color: rgb(112, 168, 0); font-size: 1.5rem; font-weight: 400'>%{meta[2]}</b>  выздоровевших  "
+        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{meta[3]}</b>  смертей  "
         + "<extra></extra>"
     )
 
@@ -35,10 +35,11 @@ def get_map(end_date=None):
             go.Scattermapbox(
                 lat=current_data["location.latitude"],
                 lon=current_data["location.longitude"],
-                text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
+                text=current_data["confirmed"].astype("str"),
+                meta=current_data[["location.name", "confirmed", "recovered", "fatal"]],
                 hoverinfo="text",
                 hovertemplate=hovertemplate,
-                mode="markers",
+                mode="markers+text",
                 marker=go.scattermapbox.Marker(
                     color="rgb(230,0,0)",
                     opacity=0.4,
@@ -47,15 +48,6 @@ def get_map(end_date=None):
                     sizemode="area",
                     sizeref=2 * max_confirmed / (60 ** 2),
                 ),
-            )
-        )
-        map_fig.add_trace(
-            go.Scattermapbox(
-                lat=current_data["location.latitude"],
-                lon=current_data["location.longitude"],
-                text=current_data["confirmed"].astype(str),
-                mode="text",
-                hoverinfo="none",
             )
         )
 
