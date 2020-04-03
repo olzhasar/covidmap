@@ -108,6 +108,7 @@ def render_layout():
                                         marks=get_marks(date_range),
                                         value=date_range[-1],
                                         included=False,
+                                        updatemode="drag",
                                     ),
                                 ],
                                 className="slider-wrapper",
