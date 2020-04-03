@@ -35,6 +35,7 @@ app.scripts.serve_locally = True
 
 def render_layout():
     date_range = get_date_range_unix()
+
     map_fig = get_map()
     charts = get_charts()
     table = get_table()
@@ -115,12 +116,6 @@ def render_layout():
                         className="map-wrapper",
                     ),
                     table,
-                    dcc.Interval(
-                        id="map_timer",
-                        interval=1500,
-                        max_intervals=len(date_range),
-                        disabled=True,
-                    ),
                 ],
                 className="main",
             ),
@@ -166,15 +161,6 @@ def update_map(value):
     dt = unix_to_datetime(value)
     label = dt.strftime("%d.%m.%y")
     return get_map(dt), label
-
-
-# @app.callback(
-#     Output("map", "figure"), [Input("map_timer", "n_intervals")],
-# )
-# def update_map(n_intervals):
-#     i = n_intervals or 1
-#     dt = date_range[i - 1]
-#     return get_map(dt)
 
 
 if __name__ == "__main__":
