@@ -1,10 +1,8 @@
-import time
-
 import pandas as pd
 
 
 def datetime_to_unix(dt):
-    return int(time.mktime(dt.timetuple()))
+    return dt.astype(int) // 10 ** 9
 
 
 def unix_to_datetime(unix):
@@ -13,10 +11,7 @@ def unix_to_datetime(unix):
 
 def get_marks(date_range):
     result = {}
-    for i, date in enumerate(date_range):
-        if i == 0 or i == len(date_range) - 1:
-            result[datetime_to_unix(date)] = str(date.strftime("%d/%m"))
-        else:
-            result[datetime_to_unix(date)] = ""
+    for i, dt in enumerate(date_range):
+        result[dt] = ""
 
     return result

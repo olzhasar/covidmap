@@ -78,8 +78,8 @@ h1, h2, h3, h4, h5, h6, label, p {
   border: 2px solid rgb(250,170,0);
 }
 
-.rc-slider-dot-active {
-  border-color: rgb(250,170,0);
+.rc-slider-dot, .rc-slider-dot-active {
+  display: none;
 }
 
 #launch-map-button {

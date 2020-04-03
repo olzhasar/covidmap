@@ -3,10 +3,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from data import get_date_range
+from data import get_date_range_unix
 from figures import get_charts, get_labels, get_map, get_table
 from server import cache, server
-from utils import datetime_to_unix, get_marks, unix_to_datetime
+from utils import get_marks, unix_to_datetime
 
 external_scripts = []
 if not server.debug:
@@ -32,10 +32,9 @@ app = dash.Dash(
 app.title = "Карта коронавирусной инфекции COVID-19 - Казахстан"
 app.scripts.serve_locally = True
 
-date_range = get_date_range()
-
 
 def render_layout():
+    date_range = get_date_range_unix()
     map_fig = get_map()
     charts = get_charts()
     table = get_table()
@@ -102,10 +101,11 @@ def render_layout():
                                     html.P("", id="current-date"),
                                     dcc.Slider(
                                         id="slider",
-                                        step=86400,
-                                        min=datetime_to_unix(date_range[0]),
-                                        max=datetime_to_unix(date_range[-1]),
-                                        value=datetime_to_unix(date_range[-1]),
+                                        step=None,
+                                        min=date_range[0],
+                                        max=date_range[-1],
+                                        marks=get_marks(date_range),
+                                        value=date_range[-1],
                                         included=False,
                                     ),
                                 ],
