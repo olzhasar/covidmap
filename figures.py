@@ -120,6 +120,7 @@ def get_charts():
         grid=None,
         xaxis={
             "title": None,
+            "type": "date",
             "showgrid": False,
             "showline": False,
             "nticks": 10,
@@ -128,9 +129,9 @@ def get_charts():
         },
         yaxis={"showgrid": False, "zeroline": False},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd", "size": 10},
-        title={"x": 0.5, "y": 0.95},
+        title={"x": 0.5, "y": 1, "pad": {"r": 0, "t": 20, "l": 0, "b": 20}},
         height=350,
-        margin={"r": 40, "t": 40, "l": 40, "b": 40},
+        margin={"r": 40, "t": 80, "l": 40, "b": 40},
     )
 
     charts = {}
@@ -148,17 +149,57 @@ def get_charts():
         title={"text": "Всего случаев с 13.03.20"}
     )
 
-    charts["cumulative_log"] = go.Figure(layout=chart_layout)
-    charts["cumulative_log"].add_trace(
-        go.Scatter(
-            x=cumulative_data.index,
-            y=cumulative_data.confirmed,
-            marker={"color": "rgba(255,170,0,0.7)"},
-            hovertemplate=chart_hov_template,
-        )
-    )
-    charts["cumulative_log"].update_layout(
-        title={"text": "Всего случаев (<i>логарифм. шкала</i>)"}, yaxis_type="log"
+    charts["cumulative_linear"].update_layout(
+        updatemenus=[
+            dict(
+                buttons=list(
+                    [
+                        dict(
+                            args=[
+                                {
+                                    "yaxis": {
+                                        "type": "linear",
+                                        "showgrid": False,
+                                        "zeroline": False,
+                                    }
+                                }
+                            ],
+                            label="Линейная шкала",
+                            method="relayout",
+                        ),
+                        dict(
+                            args=[
+                                {
+                                    "yaxis": {
+                                        "type": "log",
+                                        "showgrid": False,
+                                        "zeroline": False,
+                                    }
+                                }
+                            ],
+                            label="Логарифм. шкала",
+                            method="relayout",
+                        ),
+                    ]
+                ),
+                type="buttons",
+                direction="right",
+                showactive=False,
+                x=0.5,
+                xanchor="center",
+                y=1.15,
+                yanchor="top",
+                pad={"r": 0, "t": 0, "l": 0, "b": 20},
+                font={
+                    "family": "'Roboto Slab', sans-serif",
+                    "color": "#bdbdbd",
+                    "size": 12,
+                },
+                bgcolor=None,
+                bordercolor="#bdbdbd",
+                borderwidth=1,
+            ),
+        ]
     )
 
     charts["daily_bar"] = go.Figure(layout=chart_layout)

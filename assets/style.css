@@ -114,7 +114,7 @@ h1, h2, h3, h4, h5, h6, label, p {
   grid-area: charts;
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 3fr 2fr 2fr;
 }
 
 .header {
