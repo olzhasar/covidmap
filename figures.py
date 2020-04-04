@@ -57,7 +57,7 @@ def get_map(end_date=None):
     frames = []
 
     sliders_dict = {
-        "active": 0,
+        "active": len(date_range) - 1,
         "yanchor": "top",
         "xanchor": "left",
         "currentvalue": {
