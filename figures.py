@@ -1,5 +1,6 @@
 import dash_html_components as html
 import dash_table
+import numpy as np
 import plotly.graph_objects as go
 
 from data import (
@@ -15,17 +16,16 @@ from server import cache, server
 
 def get_map(end_date=None):
 
-    current_data = get_current_data(end_date)
     updated_at = get_updated_at()
     date_range = get_date_range()
 
     max_confirmed = get_max_confirmed()
 
     hovertemplate = (
-        "<b>  %{text[0]}  </b><br>"
-        + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{text[1]}</b>  зарегистрированных  "
-        + "<br>  <b style='color: rgb(112, 168, 0); font-size: 1.5rem; font-weight: 400'>%{text[2]}</b>  выздоровевших  "
-        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{text[3]}</b>  смертей  "
+        "<b>  %{meta[0]}  </b><br>"
+        + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{meta[1]}</b>  зарегистрированных  "
+        + "<br>  <b style='color: rgb(112, 168, 0); font-size: 1.5rem; font-weight: 400'>%{meta[2]}</b>  выздоровевших  "
+        + "<br>  <b style='font-size: 1.5rem; font-weight: 400'>%{meta[3]}</b>  смертей  "
         + "<extra></extra>"
     )
 
@@ -35,41 +35,62 @@ def get_map(end_date=None):
         return go.Scattermapbox(
             lat=current_data["location.latitude"],
             lon=current_data["location.longitude"],
-            text=current_data[["location.name", "confirmed", "recovered", "fatal"]],
-            hoverinfo="text",
+            text=current_data["confirmed"].astype("str"),
+            textfont={
+                "family": "'Roboto Slab', sans-serif",
+                "color": "#bdbdbd",
+                "size": 10,
+            },
+            meta=current_data[["location.name", "confirmed", "recovered", "fatal"]],
             hovertemplate=hovertemplate,
-            mode="markers",
+            mode="markers+text",
             marker=go.scattermapbox.Marker(
                 color="rgb(230,0,0)",
                 opacity=0.4,
                 size=current_data["confirmed"],
-                sizemin=10,
+                sizemin=9,
                 sizemode="area",
                 sizeref=2 * max_confirmed / (60 ** 2),
             ),
         )
 
-    def get_labels(end_date=None):
-        current_data = get_current_data(end_date)
-
-        return go.Scattermapbox(
-            lat=current_data["location.latitude"],
-            lon=current_data["location.longitude"],
-            text=current_data["confirmed"].astype(str),
-            mode="text",
-            hoverinfo="none",
-        )
-
     frames = []
 
-    for dt in date_range:
-        frames.append(go.Frame(data=[get_markers(dt), get_labels(dt)]))
+    sliders_dict = {
+        "active": 0,
+        "yanchor": "top",
+        "xanchor": "left",
+        "currentvalue": {
+            "font": {"size": 20, "family": "'Roboto Slab', sans-serif"},
+            "prefix": "Дата:",
+            "visible": False,
+            "xanchor": "right",
+        },
+        "transition": {"duration": 300, "easing": "cubic-in-out"},
+        "pad": {"b": 10, "t": 10},
+        "len": 0.8,
+        "x": 0.2,
+        "y": 0,
+        "steps": [],
+    }
 
-    map_fig = go.Figure(
-        data=[get_markers(end_date), get_labels(end_date)], frames=frames,
-    )
+    for i, dt in enumerate(date_range):
+        frames.append(go.Frame(data=[get_markers(dt)], name=i))
+        slider_step = {
+            "args": [
+                [i],
+                {
+                    "frame": {"duration": 300},
+                    "mode": "immediate",
+                    "transition": {"duration": 300, "easing": "quadratic-in-out"},
+                },
+            ],
+            "label": dt.strftime("%d.%m.%y"),
+            "method": "animate",
+        }
+        sliders_dict["steps"].append(slider_step)
 
-    map_fig.update_layout(
+    layout = dict(
         title={
             "text": f"Данные обновлены: {updated_at}",
             "x": 0.5,
@@ -101,30 +122,54 @@ def get_map(end_date=None):
         },
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
-        updatemenus=[
-            dict(
-                type="buttons",
-                buttons=[
-                    dict(
-                        label="Play",
-                        method="animate",
-                        args=[None, {"frame": {"duration": 500}}],
-                    )
-                ],
-            )
-        ],
+        sliders=[sliders_dict],
+        paper_bgcolor="#22252b",
     )
 
+    layout["updatemenus"] = [
+        {
+            "buttons": [
+                {
+                    "args": [
+                        None,
+                        {
+                            "frame": {"duration": 800},
+                            "transition": {
+                                "duration": 300,
+                                "easing": "quadratic-in-out",
+                            },
+                        },
+                    ],
+                    "label": "Play",
+                    "method": "animate",
+                },
+            ],
+            "direction": "left",
+            "pad": {"r": 10, "t": 47},
+            "showactive": False,
+            "type": "buttons",
+            "x": 0.02,
+            "xanchor": "left",
+            "y": 0,
+            "yanchor": "top",
+            "font": {
+                "family": "'Roboto Slab', sans-serif",
+                "color": "#bdbdbd",
+                "size": 12,
+            },
+        }
+    ]
+
+    map_fig = go.Figure(data=[get_markers(end_date)], frames=frames, layout=layout)
     return map_fig
 
 
+@cache.memoize()
 def get_charts():
 
     historical_data, cumulative_data, recovered_data = get_historical_data()
 
-    chart_hov_template = (
-        '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>'
-    )
+    chart_hov_template = "<b>%{y}</b> <br> %{x}<extra></extra>"
     chart_layout = dict(
         dragmode=False,
         paper_bgcolor="#22252b",
@@ -135,12 +180,14 @@ def get_charts():
             "font": {
                 "family": "'Roboto Slab', sans-serif",
                 "color": "#bdbdbd",
-                "size": 18,
+                "size": 14,
             },
+            "align": "left",
         },
         grid=None,
         xaxis={
             "title": None,
+            "type": "date",
             "showgrid": False,
             "showline": False,
             "nticks": 10,
@@ -149,9 +196,9 @@ def get_charts():
         },
         yaxis={"showgrid": False, "zeroline": False},
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd", "size": 10},
-        title={"x": 0.5, "y": 0.95},
+        title={"x": 0.5, "y": 1, "pad": {"r": 0, "t": 20, "l": 0, "b": 20}},
         height=350,
-        margin={"r": 40, "t": 40, "l": 40, "b": 40},
+        margin={"r": 40, "t": 80, "l": 40, "b": 40},
     )
 
     charts = {}
@@ -169,17 +216,57 @@ def get_charts():
         title={"text": "Всего случаев с 13.03.20"}
     )
 
-    charts["cumulative_log"] = go.Figure(layout=chart_layout)
-    charts["cumulative_log"].add_trace(
-        go.Scatter(
-            x=cumulative_data.index,
-            y=cumulative_data.confirmed,
-            marker={"color": "rgba(255,170,0,0.7)"},
-            hovertemplate=chart_hov_template,
-        )
-    )
-    charts["cumulative_log"].update_layout(
-        title={"text": "Всего случаев (<i>логарифм. шкала</i>)"}, yaxis_type="log"
+    charts["cumulative_linear"].update_layout(
+        updatemenus=[
+            dict(
+                buttons=list(
+                    [
+                        dict(
+                            args=[
+                                {
+                                    "yaxis": {
+                                        "type": "linear",
+                                        "showgrid": False,
+                                        "zeroline": False,
+                                    }
+                                }
+                            ],
+                            label="Линейная шкала",
+                            method="relayout",
+                        ),
+                        dict(
+                            args=[
+                                {
+                                    "yaxis": {
+                                        "type": "log",
+                                        "showgrid": False,
+                                        "zeroline": False,
+                                    }
+                                }
+                            ],
+                            label="Логарифм. шкала",
+                            method="relayout",
+                        ),
+                    ]
+                ),
+                type="buttons",
+                direction="right",
+                showactive=False,
+                x=0.5,
+                xanchor="center",
+                y=1.15,
+                yanchor="top",
+                pad={"r": 0, "t": 0, "l": 0, "b": 20},
+                font={
+                    "family": "'Roboto Slab', sans-serif",
+                    "color": "#bdbdbd",
+                    "size": 10,
+                },
+                bgcolor=None,
+                bordercolor="#bdbdbd",
+                borderwidth=1,
+            ),
+        ]
     )
 
     charts["daily_bar"] = go.Figure(layout=chart_layout)
@@ -200,17 +287,25 @@ def get_charts():
         go.Bar(
             x=recovered_data.index,
             y=recovered_data,
+            text=recovered_data.replace({0: np.nan}),
+            textposition="outside",
+            textfont={
+                "family": "'Roboto Slab', sans-serif",
+                "color": "#bdbdbd",
+                "size": 10,
+            },
             marker={"color": "rgba(112,168,0,0.7)"},
             hovertemplate=chart_hov_template,
         )
     )
     charts["recovered_bar"].update_layout(
-        title={"text": "Количество выздоровевших по дням"}
+        title={"text": "Количество выздоровевших по дням"},
     )
 
     return charts
 
 
+@cache.memoize()
 def get_table():
     current_data = get_current_data()
 
@@ -249,6 +344,7 @@ def get_table():
     return table
 
 
+@cache.memoize()
 def get_labels():
     summary = get_summary()
     updated_at = get_updated_at()

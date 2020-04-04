@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytz
 
@@ -85,6 +86,11 @@ def get_date_range(end_date=None):
     end = df.date.max()
 
     return pd.date_range(start, end)
+
+
+@cache.memoize()
+def get_date_range_unix(end_date=None):
+    return get_date_range(end_date).astype(np.int64) // 10 ** 9
 
 
 @cache.memoize()

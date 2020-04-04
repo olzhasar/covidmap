@@ -78,12 +78,16 @@ h1, h2, h3, h4, h5, h6, label, p {
   border: 2px solid rgb(250,170,0);
 }
 
-.rc-slider-dot-active {
-  border-color: rgb(250,170,0);
+.rc-slider-dot, .rc-slider-dot-active {
+  display: none;
 }
 
 #launch-map-button {
   margin-top: 1rem;
+}
+
+.updatemenu-item-rect {
+  text-align: center !important;
 }
 
 .dashboard {
@@ -114,7 +118,7 @@ h1, h2, h3, h4, h5, h6, label, p {
   grid-area: charts;
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 3fr 2fr 2fr;
 }
 
 .header {
