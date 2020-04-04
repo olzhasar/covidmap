@@ -17,7 +17,7 @@ class Config(object):
     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
     MAPBOX_STYLE_URL = os.getenv("MAPBOX_STYLE_URL", "dark")
 
-    CACHE_TYPE = os.getenv("CACHE_TYPE", "redis")
+    CACHE_TYPE = os.getenv("CACHE_TYPE", "null")
     CACHE_DEFAULT_TIMEOUT = 0
     CACHE_DIR = os.path.join(BASEDIR, "cache")
 
