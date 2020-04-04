@@ -14,6 +14,7 @@ from data import (
 from server import cache, server
 
 
+@cache.memoize()
 def get_map(end_date=None):
 
     updated_at = get_updated_at()
