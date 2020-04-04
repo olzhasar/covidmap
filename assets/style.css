@@ -129,6 +129,22 @@ h1, h2, h3, h4, h5, h6, label, p {
   grid-area: footer;
 }
 
+@media (max-width: 1600px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:    "header"
+			    "summary"
+			    "main"	
+			    "charts"
+			    "footer"
+  }
+  .summary {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+
 @media (max-width: 800px) {
   .dashboard {
     grid-gap: 0;
