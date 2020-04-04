@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytz
 
-from server import CaseData, cache
+from server import CaseData, Location, cache
 from utils import get_current_time_date
 
 
@@ -16,6 +16,7 @@ def load_df_from_db(end_date=None):
         "confirmed",
         "recovered",
         "fatal",
+        "location.id",
         "location.name",
         "location.latitude",
         "location.longitude",
@@ -25,6 +26,13 @@ def load_df_from_db(end_date=None):
         df.sort_values("date", inplace=True)
 
     return df
+
+
+@cache.memoize()
+def get_regions():
+    return (
+        Location.query.with_entities(Location.id, Location.name).order_by("name").all()
+    )
 
 
 @cache.memoize()
@@ -105,22 +113,28 @@ def get_date_range_unix(end_date=None):
 
 
 @cache.memoize()
-def get_historical_data(end_date=None):
+def get_historical_data(end_date=None, location_id=None):
     df = load_df_from_db(end_date)
 
-    historical_data = (
-        df[["date", "confirmed", "recovered", "fatal"]].groupby("date").sum()
-    )
-    historical_data.index = pd.to_datetime(historical_data.index)
-
     date_range = get_date_range(end_date)
+    columns = ["date", "confirmed", "recovered", "fatal"]
 
-    historical_data = historical_data.reindex(date_range).fillna(value=0)
+    if location_id:
+        df = df[df["location.id"] == location_id]
+
+    if df.empty:
+        historical_data = pd.DataFrame(index=date_range, columns=columns)
+    else:
+        historical_data = df[columns].groupby("date").sum()
+        historical_data.index = pd.to_datetime(historical_data.index)
+        historical_data = historical_data.reindex(date_range).fillna(value=0)
+
     cumulative_data = historical_data.cumsum()
 
     recovered_data = historical_data["recovered"]
-    first_recovered_date = recovered_data[recovered_data > 0].index[0]
-    recovered_data = recovered_data.loc[first_recovered_date:]
+    recovered_positive = recovered_data[recovered_data > 0]
+    if not recovered_positive.empty:
+        recovered_data = recovered_data.loc[recovered_positive.index[0] :]
 
     return historical_data, cumulative_data, recovered_data
 
