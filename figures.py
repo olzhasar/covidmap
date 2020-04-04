@@ -61,17 +61,27 @@ def get_map(end_date=None):
         "yanchor": "top",
         "xanchor": "left",
         "currentvalue": {
-            "font": {"size": 20, "family": "'Roboto Slab', sans-serif"},
+            "font": {
+                "size": 12,
+                "family": "'Roboto Slab', sans-serif",
+                "color": "#bdbdbd",
+            },
             "prefix": "Дата:",
-            "visible": False,
-            "xanchor": "right",
+            "visible": True,
+            "xanchor": "center",
         },
-        "transition": {"duration": 300, "easing": "cubic-in-out"},
+        "transition": {"duration": 150, "easing": "elastic-in-out"},
         "pad": {"b": 10, "t": 10},
-        "len": 0.8,
-        "x": 0.2,
+        "len": 0.9,
+        "x": 0.05,
         "y": 0,
         "steps": [],
+        "font": {
+            "size": 10,
+            "family": "'Roboto Slab', sans-serif",
+            "color": "#bdbdbd",
+        },
+        "bgcolor": "#bdbdbd",
     }
 
     for i, dt in enumerate(date_range):
@@ -125,40 +135,6 @@ def get_map(end_date=None):
         sliders=[sliders_dict],
         paper_bgcolor="#22252b",
     )
-
-    layout["updatemenus"] = [
-        {
-            "buttons": [
-                {
-                    "args": [
-                        None,
-                        {
-                            "frame": {"duration": 800},
-                            "transition": {
-                                "duration": 300,
-                                "easing": "quadratic-in-out",
-                            },
-                        },
-                    ],
-                    "label": "Play",
-                    "method": "animate",
-                },
-            ],
-            "direction": "left",
-            "pad": {"r": 10, "t": 47},
-            "showactive": False,
-            "type": "buttons",
-            "x": 0.02,
-            "xanchor": "left",
-            "y": 0,
-            "yanchor": "top",
-            "font": {
-                "family": "'Roboto Slab', sans-serif",
-                "color": "#bdbdbd",
-                "size": 12,
-            },
-        }
-    ]
 
     map_fig = go.Figure(data=[get_markers(end_date)], frames=frames, layout=layout)
     return map_fig
