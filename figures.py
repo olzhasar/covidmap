@@ -36,6 +36,11 @@ def get_map(end_date=None):
                 lat=current_data["location.latitude"],
                 lon=current_data["location.longitude"],
                 text=current_data["confirmed"].astype("str"),
+                textfont={
+                    "family": "'Roboto Slab', sans-serif",
+                    "color": "#bdbdbd",
+                    "size": 10,
+                },
                 meta=current_data[["location.name", "confirmed", "recovered", "fatal"]],
                 hoverinfo="text",
                 hovertemplate=hovertemplate,
