@@ -159,10 +159,6 @@ h1, h2, h3, h4, h5, h6, label, p {
     grid-template-rows: auto auto;
   }
 
-  #map {
-    height: 400px;
-  }
-
   body {
     margin: 0;
     background-color: #22252b;

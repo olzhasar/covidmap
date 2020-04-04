@@ -1,12 +1,9 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
 
-from data import get_date_range_unix
 from figures import get_charts, get_labels, get_map, get_table
 from server import cache, server
-from utils import get_marks, unix_to_datetime
 
 external_scripts = []
 if not server.debug:
@@ -34,8 +31,6 @@ app.scripts.serve_locally = True
 
 
 def render_layout():
-    date_range = get_date_range_unix()
-
     map_fig = get_map()
     charts = get_charts()
     table = get_table()
@@ -93,10 +88,7 @@ def render_layout():
                 className="summary",
             ),
             html.Div(
-                children=[
-                    dcc.Graph(id="map", figure=map_fig),
-                    table,
-                ],
+                children=[dcc.Graph(id="map", figure=map_fig, responsive=True), table,],
                 className="main",
             ),
             html.Div(
