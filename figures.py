@@ -49,7 +49,7 @@ def get_map(end_date=None):
                     color="rgb(230,0,0)",
                     opacity=0.4,
                     size=current_data["confirmed"],
-                    sizemin=10,
+                    sizemin=9,
                     sizemode="area",
                     sizeref=2 * max_confirmed / (60 ** 2),
                 ),
