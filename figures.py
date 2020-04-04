@@ -193,7 +193,7 @@ def get_charts():
                 font={
                     "family": "'Roboto Slab', sans-serif",
                     "color": "#bdbdbd",
-                    "size": 12,
+                    "size": 10,
                 },
                 bgcolor=None,
                 bordercolor="#bdbdbd",
