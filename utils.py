@@ -1,4 +1,7 @@
+from datetime import datetime
+
 import pandas as pd
+import pytz
 
 
 def datetime_to_unix(dt):
@@ -15,3 +18,9 @@ def get_marks(date_range):
         result[dt] = ""
 
     return result
+
+
+def get_current_time_date():
+    tz = pytz.timezone("Asia/Almaty")
+    now = datetime.now(tz)
+    return now, now.date()
