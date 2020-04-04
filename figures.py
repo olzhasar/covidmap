@@ -1,5 +1,6 @@
 import dash_html_components as html
 import dash_table
+import numpy as np
 import plotly.graph_objects as go
 
 from data import (
@@ -96,13 +97,12 @@ def get_map(end_date=None):
     return map_fig
 
 
+@cache.memoize()
 def get_charts():
 
     historical_data, cumulative_data, recovered_data = get_historical_data()
 
-    chart_hov_template = (
-        '%{x}:  <b style="color: rgb(230,0,0);">%{y}</b><extra></extra>'
-    )
+    chart_hov_template = "<b>%{y}</b> <br> %{x}<extra></extra>"
     chart_layout = dict(
         dragmode=False,
         paper_bgcolor="#22252b",
@@ -113,8 +113,9 @@ def get_charts():
             "font": {
                 "family": "'Roboto Slab', sans-serif",
                 "color": "#bdbdbd",
-                "size": 18,
+                "size": 14,
             },
+            "align": "left",
         },
         grid=None,
         xaxis={
@@ -178,17 +179,25 @@ def get_charts():
         go.Bar(
             x=recovered_data.index,
             y=recovered_data,
+            text=recovered_data.replace({0: np.nan}),
+            textposition="outside",
+            textfont={
+                "family": "'Roboto Slab', sans-serif",
+                "color": "#bdbdbd",
+                "size": 10,
+            },
             marker={"color": "rgba(112,168,0,0.7)"},
             hovertemplate=chart_hov_template,
         )
     )
     charts["recovered_bar"].update_layout(
-        title={"text": "Количество выздоровевших по дням"}
+        title={"text": "Количество выздоровевших по дням"},
     )
 
     return charts
 
 
+@cache.memoize()
 def get_table():
     current_data = get_current_data()
 
@@ -227,6 +236,7 @@ def get_table():
     return table
 
 
+@cache.memoize()
 def get_labels():
     summary = get_summary()
     updated_at = get_updated_at()
