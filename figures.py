@@ -136,7 +136,6 @@ def get_map(end_date=None):
         font={"family": "'Roboto Slab', sans-serif", "color": "#bdbdbd"},
         sliders=[sliders_dict],
         paper_bgcolor="#22252b",
-        height=350,
     )
 
     layout["updatemenus"] = [
