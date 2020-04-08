@@ -19,8 +19,8 @@ META_TAGS = [
         "name": "google-site-verification",
         "content": "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A",
     },
-    {"property": "og:image", "content": "https://covidmap.kz/assets/covidmap.kz.png"},
-    {"property": "og:image:type", "content": "image/png"},
+    {"property": "og:image", "content": "https://covidmap.kz/assets/covidmap.kz.jpg"},
+    {"property": "og:image:type", "content": "image/jpeg"},
     {"property": "og:image:width", "content": "1905"},
     {"property": "og:image:height", "content": "1322"},
 ]
