@@ -9,21 +9,27 @@ external_scripts = []
 if not server.debug:
     external_scripts.append(server.config["GA_URL"])
 
+META_TAGS = [
+    {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
+    {
+        "name": "description",
+        "content": "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений",
+    },
+    {
+        "name": "google-site-verification",
+        "content": "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A",
+    },
+    {"property": "og:image", "content": "https://covidmap.kz/assets/covidmap.kz.png"},
+    {"property": "og:image:type", "content": "image/png"},
+    {"property": "og:image:width", "content": "1905"},
+    {"property": "og:image:height", "content": "1322"},
+]
+
 app = dash.Dash(
     "COVID-19 Map Kazakhstan",
     server=server,
     external_scripts=external_scripts,
-    meta_tags=[
-        {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
-        {
-            "name": "description",
-            "content": "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений",
-        },
-        {
-            "name": "google-site-verification",
-            "content": "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A",
-        },
-    ],
+    meta_tags=META_TAGS,
 )
 
 app.title = "Карта коронавирусной инфекции COVID-19 - Казахстан"
