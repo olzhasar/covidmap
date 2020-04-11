@@ -129,6 +129,8 @@ def get_historical_data(end_date=None, location_id=None):
         historical_data.index = pd.to_datetime(historical_data.index)
         historical_data = historical_data.reindex(date_range).fillna(value=0)
 
+    historical_data["growth_rate"] = historical_data.confirmed.pct_change()
+
     cumulative_data = historical_data.cumsum()
 
     recovered_data = historical_data["recovered"]

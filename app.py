@@ -100,6 +100,7 @@ def render_layout():
             html.Div(
                 children=[
                     dcc.Graph(figure=charts["cumulative_linear"]),
+                    dcc.Graph(figure=charts["growth_rate"]),
                     dcc.Graph(figure=charts["daily_bar"]),
                     dcc.Graph(figure=charts["recovered_bar"]),
                 ],

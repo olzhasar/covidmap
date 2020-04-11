@@ -234,6 +234,7 @@ def get_charts():
             x=cumulative_data.index,
             y=cumulative_data.confirmed,
             marker={"color": "rgba(255,170,0,0.7)"},
+            mode="lines+markers",
             hovertemplate=chart_hov_template,
         )
     )
@@ -305,6 +306,20 @@ def get_charts():
     )
     charts["daily_bar"].update_layout(
         title={"text": "Количество новых случаев по дням"}
+    )
+
+    charts["growth_rate"] = go.Figure(layout=chart_layout)
+    charts["growth_rate"].add_trace(
+        go.Scatter(
+            x=historical_data.index,
+            y=historical_data.growth_rate,
+            marker={"color": "rgb(230,0,0)"},
+            mode="lines+markers",
+            hovertemplate=chart_hov_template,
+        )
+    )
+    charts["growth_rate"].update_layout(
+        title={"text": "Темпы роста зарегистрированных случаев"}
     )
 
     charts["recovered_bar"] = go.Figure(layout=chart_layout)
