@@ -1,3 +1,4 @@
+import plotly.express as px
 import plotly.graph_objects as go
 from pandas import DataFrame
 
@@ -123,6 +124,38 @@ def render_confirmed_daily_chart(df: DataFrame):
 
 
 @cache.memoize()
+def render_confirmed_cumulative_by_region_chart(df: DataFrame):
+    top_regions = (
+        df.groupby("location_id")["confirmed"]
+        .sum()
+        .sort_values(ascending=False)
+        .iloc[:5]
+        .index
+    )
+    df = df.loc[top_regions].reset_index()[["confirmed_cumulative", "date", "name"]]
+
+    chart = go.Figure(layout=CHART_LAYOUT)
+
+    for name, current_df in df.groupby("name"):
+        chart.add_trace(
+            go.Scatter(
+                x=current_df.date,
+                y=current_df.confirmed_cumulative,
+                name=name,
+                mode="lines",
+                hovertemplate=CHART_HOVER_TEMPLATE,
+            )
+        )
+    chart.update_layout(
+        title={"text": "Всего случаев в разрезе регионов (Топ 5)"},
+        colorway=px.colors.qualitative.Bold,
+        legend=dict(traceorder="reversed", x=0.05, y=1.0,),
+    )
+
+    return chart
+
+
+@cache.memoize()
 def render_daily_increase_chart(df: DataFrame):
     df["daily_increase"] = df.confirmed_cumulative.pct_change() * 100
     hover_template = "<b>%{text} %</b> <br> %{x}<extra></extra>"
@@ -157,5 +190,24 @@ def render_recovered_cumulative_chart(df: DataFrame):
         )
     )
     chart.update_layout(title={"text": "Всего выздоровевших"},)
+
+    return chart
+
+
+@cache.memoize()
+def render_fatal_cumulative_chart(df: DataFrame):
+    df = df[df["fatal_cumulative"] > 0]
+
+    chart = go.Figure(layout=CHART_LAYOUT)
+    chart.add_trace(
+        go.Scatter(
+            x=df.index,
+            y=df.fatal_cumulative,
+            mode="lines+markers",
+            marker={"color": "#bdbdbd"},
+            hovertemplate=CHART_HOVER_TEMPLATE,
+        )
+    )
+    chart.update_layout(title={"text": "Всего смертей"},)
 
     return chart

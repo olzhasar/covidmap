@@ -4,9 +4,11 @@ import dash_html_components as html
 
 from data import get_df, get_updated_at
 from figures.charts import (
+    render_confirmed_cumulative_by_region_chart,
     render_confirmed_cumulative_chart,
     render_confirmed_daily_chart,
     render_daily_increase_chart,
+    render_fatal_cumulative_chart,
     render_recovered_cumulative_chart,
 )
 from figures.map import get_map
@@ -53,6 +55,10 @@ def render_layout():
     confirmed_daily_chart = render_confirmed_daily_chart(total_df)
     recovered_cumulative_chart = render_recovered_cumulative_chart(total_df)
     daily_increase_chart = render_daily_increase_chart(total_df)
+    fatal_cumulative_chart = render_fatal_cumulative_chart(total_df)
+    confirmed_cumulative_by_region_chart = render_confirmed_cumulative_by_region_chart(
+        df
+    )
 
     table = get_table(df)
 
@@ -114,9 +120,11 @@ def render_layout():
             html.Div(
                 children=[
                     dcc.Graph(figure=confirmed_cumulative_chart),
+                    dcc.Graph(figure=confirmed_cumulative_by_region_chart),
                     dcc.Graph(figure=daily_increase_chart),
                     dcc.Graph(figure=confirmed_daily_chart),
                     dcc.Graph(figure=recovered_cumulative_chart),
+                    dcc.Graph(figure=fatal_cumulative_chart),
                 ],
                 className="charts",
             ),
