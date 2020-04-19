@@ -30,4 +30,8 @@ class Config(object):
     FETCH_URL = os.getenv("FETCH_URL")
     FETCH_INTERVAL = int(os.getenv("FETCH_INTERVAL", 10))
 
-    GA_URL = "https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"
+    GOOGLE_ANALYTICS_URL = "https://www.googletagmanager.com/gtag/js?id=UA-51154533-8"
+    GOOGLE_META = "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A"
+
+    SEO_TITLE = "Карта коронавирусной инфекции COVID-19 - Казахстан"
+    SEO_DESCRIPTION = "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений"

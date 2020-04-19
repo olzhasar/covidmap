@@ -7,6 +7,7 @@ from data import (
     get_current_data,
     get_date_range,
     get_historical_data,
+    get_locations,
     get_max_confirmed,
     get_summary,
     get_updated_at,
@@ -15,12 +16,14 @@ from server import cache, server
 
 
 @cache.memoize()
-def get_map(end_date=None):
+def get_map(df, locations_df, updated_at=None):
 
-    updated_at = get_updated_at()
-    date_range = get_date_range()
+    df = df.groupby("location_id").cumsum()
+    df = df.merge(locations_df["name"], left_on="location_id", right_index=True)
 
-    max_confirmed = get_max_confirmed()
+    date_range = df.index.get_level_values(1).unique().sort_values()
+
+    max_confirmed = df.sum()["confirmed"]
 
     hovertemplate = (
         "<b>  %{meta[0]}  </b><br>"
@@ -30,25 +33,23 @@ def get_map(end_date=None):
         + "<extra></extra>"
     )
 
-    def get_markers(end_date=None):
-        current_data = get_current_data(end_date)
-
+    def get_markers(current_df):
         return go.Scattermapbox(
-            lat=current_data["location.latitude"],
-            lon=current_data["location.longitude"],
-            text=current_data["confirmed"].astype("str"),
+            lat=locations_df.latitude,
+            lon=locations_df.longitude,
+            text=current_df.confirmed.astype(str),
             textfont={
                 "family": "'Roboto Slab', sans-serif",
                 "color": "#bdbdbd",
                 "size": 10,
             },
-            meta=current_data[["location.name", "confirmed", "recovered", "fatal"]],
+            meta=current_df[["name", "confirmed", "recovered", "fatal"]],
             hovertemplate=hovertemplate,
             mode="markers+text",
             marker=go.scattermapbox.Marker(
                 color="rgb(230,0,0)",
                 opacity=0.4,
-                size=current_data["confirmed"],
+                size=current_df.confirmed,
                 sizemin=9,
                 sizemode="area",
                 sizeref=2 * max_confirmed / (60 ** 2),
@@ -86,8 +87,10 @@ def get_map(end_date=None):
         "bgcolor": "#bdbdbd",
     }
 
-    for i, dt in enumerate(date_range):
-        frames.append(go.Frame(data=[get_markers(dt)], name=i))
+    i = 1
+
+    for dt, current_df in df.groupby(level=1):
+        frames.append(go.Frame(data=[get_markers(current_df)], name=i))
         slider_step = {
             "args": [
                 [i],
@@ -101,6 +104,7 @@ def get_map(end_date=None):
             "method": "animate",
         }
         sliders_dict["steps"].append(slider_step)
+        i += 1
 
     layout = dict(
         title={
@@ -116,7 +120,6 @@ def get_map(end_date=None):
         mapbox=dict(
             accesstoken=server.config["MAPBOX_TOKEN"],
             bearing=0,
-            style=server.config["MAPBOX_STYLE_URL"],
             center=go.layout.mapbox.Center(lat=48.0196, lon=66.9237),
             zoom=3,
             pitch=0,
@@ -185,14 +188,29 @@ def get_map(end_date=None):
         }
     ]
 
-    map_fig = go.Figure(data=[get_markers(end_date)], frames=frames, layout=layout)
+    map_fig = go.Figure(data=get_markers(current_df), frames=frames, layout=layout)
     return map_fig
 
 
 @cache.memoize()
-def get_charts():
+def get_charts(df, locations):
 
     historical_data, cumulative_data, recovered_data = get_historical_data()
+    data = {}
+
+    regions = get_locations()
+    for i, region_name in regions:
+        (
+            data[i]["historical"],
+            data[i]["cumulative"],
+            data[i]["recovered"],
+        ) = get_historical_data(location_id=i)
+
+    (
+        data[0]["historical"],
+        data[0]["cumulative"],
+        data[0]["recovered"],
+    ) = get_historical_data()
 
     chart_hov_template = "<b>%{y}</b> <br> %{x}<extra></extra>"
     chart_layout = dict(
@@ -231,8 +249,8 @@ def get_charts():
     charts["cumulative_linear"] = go.Figure(layout=chart_layout)
     charts["cumulative_linear"].add_trace(
         go.Scatter(
-            x=cumulative_data.index,
-            y=cumulative_data.confirmed,
+            x=data[0]["cumulative"].index,
+            y=data[0]["cumulative"].confirmed,
             marker={"color": "rgba(255,170,0,0.7)"},
             mode="lines+markers",
             hovertemplate=chart_hov_template,

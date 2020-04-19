@@ -2,23 +2,25 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from figures import get_charts, get_labels, get_map, get_table
+from data import get_df, get_updated_at
+from figures.charts import (
+    render_confirmed_cumulative_chart,
+    render_confirmed_daily_chart,
+    render_daily_increase_chart,
+    render_recovered_cumulative_chart,
+)
+from figures.map import get_map
+from figures.table import get_table
 from server import cache, server
 
 external_scripts = []
 if not server.debug:
-    external_scripts.append(server.config["GA_URL"])
+    external_scripts.append(server.config["GOOGLE_ANALYTICS_URL"])
 
 META_TAGS = [
     {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
-    {
-        "name": "description",
-        "content": "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений",
-    },
-    {
-        "name": "google-site-verification",
-        "content": "nORpfyOs_-RD9ONCHwL0OM0R2E3vIioVYu1ea5Ecp2A",
-    },
+    {"name": "description", "content": server.config["SEO_DESCRIPTION"],},
+    {"name": "google-site-verification", "content": server.config["GOOGLE_META"],},
     {"property": "og:image", "content": "https://covidmap.kz/assets/covidmap.kz.jpg"},
     {"property": "og:image:type", "content": "image/jpeg"},
     {"property": "og:image:width", "content": "1905"},
@@ -32,15 +34,27 @@ app = dash.Dash(
     meta_tags=META_TAGS,
 )
 
-app.title = "Карта коронавирусной инфекции COVID-19 - Казахстан"
+app.title = server.config["SEO_TITLE"]
 app.scripts.serve_locally = True
 
 
+@cache.memoize()
 def render_layout():
-    map_fig = get_map()
-    charts = get_charts()
-    table = get_table()
-    labels = get_labels()
+    df = get_df()
+
+    updated_at = get_updated_at()
+    summary = df[["confirmed", "recovered", "fatal"]].sum()
+
+    map_fig = get_map(df, updated_at)
+
+    total_df = df.groupby("date").sum()
+
+    confirmed_cumulative_chart = render_confirmed_cumulative_chart(total_df)
+    confirmed_daily_chart = render_confirmed_daily_chart(total_df)
+    recovered_cumulative_chart = render_recovered_cumulative_chart(total_df)
+    daily_increase_chart = render_daily_increase_chart(total_df)
+
+    table = get_table(df)
 
     layout = html.Div(
         children=[
@@ -62,7 +76,7 @@ def render_layout():
                 children=[
                     html.Div(
                         children=[
-                            labels["confirmed"],
+                            html.H2(summary.confirmed, className="card-title danger"),
                             html.H3(
                                 "Зарегистрированных случаев", className="card-subtitle",
                             ),
@@ -71,14 +85,14 @@ def render_layout():
                     ),
                     html.Div(
                         children=[
-                            labels["recovered"],
+                            html.H2(summary.recovered, className="card-title success"),
                             html.H3("Выздоровевших", className="card-subtitle"),
                         ],
                         className="card",
                     ),
                     html.Div(
                         children=[
-                            labels["fatal"],
+                            html.H2(summary.fatal, className="card-title"),
                             html.H3("Летальных исходов", className="card-subtitle"),
                         ],
                         className="card",
@@ -86,7 +100,7 @@ def render_layout():
                     html.Div(
                         children=[
                             html.P("Последнее обновление"),
-                            labels["updated_at"],
+                            html.H3(updated_at, className="card-subtitle"),
                         ],
                         className="card is-hidden-mobile",
                     ),
@@ -94,15 +108,15 @@ def render_layout():
                 className="summary",
             ),
             html.Div(
-                children=[dcc.Graph(id="map", figure=map_fig, responsive=True), table,],
+                children=[dcc.Graph(id="map", figure=map_fig, responsive=True), table],
                 className="main",
             ),
             html.Div(
                 children=[
-                    dcc.Graph(figure=charts["cumulative_linear"]),
-                    dcc.Graph(figure=charts["growth_rate"]),
-                    dcc.Graph(figure=charts["daily_bar"]),
-                    dcc.Graph(figure=charts["recovered_bar"]),
+                    dcc.Graph(figure=confirmed_cumulative_chart),
+                    dcc.Graph(figure=daily_increase_chart),
+                    dcc.Graph(figure=confirmed_daily_chart),
+                    dcc.Graph(figure=recovered_cumulative_chart),
                 ],
                 className="charts",
             ),

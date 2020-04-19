@@ -29,10 +29,58 @@ def load_df_from_db(end_date=None):
 
 
 @cache.memoize()
-def get_regions():
-    return (
-        Location.query.with_entities(Location.id, Location.name).order_by("name").all()
+def get_locations():
+    return Location.query.with_entities(Location.id).order_by("id").all()
+
+
+@cache.memoize()
+def get_locations_df():
+    query = Location.query.with_entities(
+        Location.id, Location.name, Location.latitude, Location.longitude
     )
+    df = pd.DataFrame(query).set_index("id")
+    return df
+
+
+@cache.memoize()
+def get_date_range(start_date=None, end_date=None):
+    if not end_date:
+        _, end_date = get_current_time_date()
+
+    return pd.date_range(start_date, end_date)
+
+
+@cache.memoize()
+def get_df(end_date=None):
+    query = CaseData.query
+    if end_date:
+        query = query.filter(CaseData.date <= end_date)
+    query = (
+        query.join(CaseData.location)
+        .order_by("date")
+        .values("date", "confirmed", "recovered", "fatal", "location_id",)
+    )
+    df = pd.DataFrame(query)
+
+    date_range = get_date_range(df.date.min(), end_date)
+    locations = [i for i, in get_locations()]
+
+    index = pd.MultiIndex.from_product(
+        [locations, date_range], names=["location_id", "date"]
+    )
+
+    df = df.groupby(["location_id", "date"]).sum().reindex(index)
+    df = df.fillna(0).astype("int32")
+
+    locations_df = get_locations_df()
+
+    df["confirmed_cumulative"] = df.groupby("location_id").confirmed.cumsum()
+    df["recovered_cumulative"] = df.groupby("location_id").recovered.cumsum()
+    df["fatal_cumulative"] = df.groupby("location_id").fatal.cumsum()
+
+    df = df.merge(locations_df, left_on="location_id", right_index=True)
+
+    return df
 
 
 @cache.memoize()
@@ -93,18 +141,6 @@ def get_max_confirmed():
 def get_summary():
     current_data = get_current_data()
     return current_data[["confirmed", "recovered", "fatal"]].sum()
-
-
-@cache.memoize()
-def get_date_range(end_date=None):
-    df = load_df_from_db(end_date)
-
-    start_date = df.date.min()
-
-    if not end_date:
-        _, end_date = get_current_time_date()
-
-    return pd.date_range(start_date, end_date)
 
 
 @cache.memoize()
