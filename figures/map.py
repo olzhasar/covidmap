@@ -8,7 +8,7 @@ def get_map(df, updated_at=None):
 
     date_range = df.index.get_level_values(1).unique().sort_values()
 
-    max_confirmed = df.confirmed.max()
+    max_confirmed = df.confirmed_cumulative.max()
 
     hovertemplate = (
         "<b>  %{meta[0]}  </b><br>"
