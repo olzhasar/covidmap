@@ -40,7 +40,6 @@ app.title = server.config["SEO_TITLE"]
 app.scripts.serve_locally = True
 
 
-@cache.memoize()
 def render_layout():
     df = get_df()
 
