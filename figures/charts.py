@@ -2,8 +2,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pandas import DataFrame
 
-from server import cache
-
 CHART_HOVER_TEMPLATE = "<b>%{y}</b> <br> %{x}<extra></extra>"
 
 CHART_LAYOUT = dict(
@@ -38,7 +36,6 @@ CHART_LAYOUT = dict(
 )
 
 
-@cache.memoize()
 def render_confirmed_cumulative_chart(df: DataFrame):
     chart = go.Figure(layout=CHART_LAYOUT)
     chart.add_trace(
@@ -107,7 +104,6 @@ def render_confirmed_cumulative_chart(df: DataFrame):
     return chart
 
 
-@cache.memoize()
 def render_confirmed_daily_chart(df: DataFrame):
     chart = go.Figure(layout=CHART_LAYOUT)
     chart.add_trace(
@@ -123,7 +119,6 @@ def render_confirmed_daily_chart(df: DataFrame):
     return chart
 
 
-@cache.memoize()
 def render_confirmed_cumulative_by_region_chart(df: DataFrame):
     top_regions = (
         df.groupby("location_id")["confirmed"]
@@ -155,7 +150,6 @@ def render_confirmed_cumulative_by_region_chart(df: DataFrame):
     return chart
 
 
-@cache.memoize()
 def render_daily_increase_chart(df: DataFrame):
     df["daily_increase"] = df.confirmed_cumulative.pct_change() * 100
     hover_template = "<b>%{text} %</b> <br> %{x}<extra></extra>"
@@ -175,7 +169,6 @@ def render_daily_increase_chart(df: DataFrame):
     return chart
 
 
-@cache.memoize()
 def render_recovered_cumulative_chart(df: DataFrame):
     df = df[df["recovered_cumulative"] > 0]
 
@@ -194,7 +187,6 @@ def render_recovered_cumulative_chart(df: DataFrame):
     return chart
 
 
-@cache.memoize()
 def render_fatal_cumulative_chart(df: DataFrame):
     df = df[df["fatal_cumulative"] > 0]
 
