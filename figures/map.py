@@ -1,8 +1,9 @@
 import plotly.graph_objects as go
 
-from server import server
+from server import cache, server
 
 
+@cache.memoize()
 def get_map(df, updated_at=None):
 
     date_range = df.index.get_level_values(1).unique().sort_values()

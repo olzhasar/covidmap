@@ -1,6 +1,8 @@
 import dash_table
 from pandas import DataFrame
 
+from server import cache
+
 
 def get_increase_str(x):
     if x > 0:
@@ -8,6 +10,7 @@ def get_increase_str(x):
     return None
 
 
+@cache.memoize()
 def get_table(df: DataFrame):
 
     grouped = df[["confirmed", "name"]].groupby("name")
