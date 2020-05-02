@@ -10,6 +10,8 @@ def get_map(df, updated_at=None):
 
     max_confirmed = df.confirmed_cumulative.max()
 
+    current_df = df.groupby(level=0).last()
+
     hovertemplate = (
         "<b>  %{meta[0]}  </b><br>"
         + "<br>  <b style='color: rgb(200,0,0); font-size: 1.5rem; font-weight: 400;'>%{meta[1]}</b>  зарегистрированных  "
@@ -49,8 +51,6 @@ def get_map(df, updated_at=None):
             ),
         )
 
-    frames = []
-
     sliders_dict = {
         "active": len(date_range) - 1,
         "yanchor": "top",
@@ -79,25 +79,6 @@ def get_map(df, updated_at=None):
         },
         "bgcolor": "#bdbdbd",
     }
-
-    i = 1
-
-    for dt, current_df in df.groupby(level=1):
-        frames.append(go.Frame(data=[get_markers(current_df)], name=i))
-        slider_step = {
-            "args": [
-                [i],
-                {
-                    "frame": {"duration": 500},
-                    "mode": "immediate",
-                    "transition": {"duration": 300, "easing": "quadratic-in-out"},
-                },
-            ],
-            "label": dt.strftime("%d.%m.%y"),
-            "method": "animate",
-        }
-        sliders_dict["steps"].append(slider_step)
-        i += 1
 
     layout = dict(
         title={
@@ -135,52 +116,5 @@ def get_map(df, updated_at=None):
         paper_bgcolor="#22252b",
     )
 
-    layout["updatemenus"] = [
-        {
-            "buttons": [
-                {
-                    "args": [
-                        None,
-                        {
-                            "frame": {"duration": 800},
-                            "transition": {
-                                "duration": 300,
-                                "easing": "quadratic-in-out",
-                            },
-                        },
-                    ],
-                    "label": "Play",
-                    "method": "animate",
-                },
-                {
-                    "args": [
-                        [None],
-                        {
-                            "frame": {"duration": 0},
-                            "mode": "immediate",
-                            "transition": {"duration": 0},
-                        },
-                    ],
-                    "label": "Stop",
-                    "method": "animate",
-                },
-            ],
-            "direction": "right",
-            "pad": {"t": 10},
-            "showactive": False,
-            "type": "buttons",
-            "x": 0.05,
-            "xanchor": "left",
-            "y": 0,
-            "yanchor": "top",
-            "font": {
-                "family": "'Roboto Slab', sans-serif",
-                "color": "#bdbdbd",
-                "size": 10,
-            },
-            "bordercolor": "#bdbdbd",
-        }
-    ]
-
-    map_fig = go.Figure(data=get_markers(current_df), frames=frames, layout=layout)
+    map_fig = go.Figure(data=get_markers(current_df), layout=layout)
     return map_fig
