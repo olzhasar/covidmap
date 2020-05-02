@@ -29,7 +29,7 @@ def get_map(df, updated_at=None):
             textfont={
                 "family": "'Roboto Slab', sans-serif",
                 "color": "#bdbdbd",
-                "size": 10,
+                "size": 9,
             },
             meta=current_df[
                 [
@@ -45,7 +45,7 @@ def get_map(df, updated_at=None):
                 color="rgb(230,0,0)",
                 opacity=0.4,
                 size=confirmed,
-                sizemin=9,
+                sizemin=10,
                 sizemode="area",
                 sizeref=2 * max_confirmed / (60 ** 2),
             ),
