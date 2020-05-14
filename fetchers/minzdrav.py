@@ -24,6 +24,7 @@ def fetch_data():
         rows = [d.text.strip() for d in divs]
 
         for row in rows:
+            row = re.sub("[\(\[].*?[\)\]]", "", row)
             value = int("".join(filter(str.isdigit, row)))
             name = re.search("([^\d ]+ ?[^\d ]+)+", row).group(0).strip()
 
