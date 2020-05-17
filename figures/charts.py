@@ -46,7 +46,7 @@ def render_confirmed_cumulative_chart(df: DataFrame):
             x=df.index,
             y=df.confirmed_cumulative,
             marker={"color": "rgba(255,170,0,0.7)"},
-            mode="lines+markers",
+            mode="lines",
             hovertemplate=CHART_HOVER_TEMPLATE,
         )
     )
@@ -158,6 +158,7 @@ def render_confirmed_cumulative_by_region_chart(df: DataFrame):
 @cache.memoize()
 def render_daily_increase_chart(df: DataFrame):
     df["daily_increase"] = df.confirmed_cumulative.pct_change() * 100
+    df = df.tail(20)
     hover_template = "<b>%{text} %</b> <br> %{x}<extra></extra>"
 
     chart = go.Figure(layout=CHART_LAYOUT)
