@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 def fetch_data():
     url = "https://www.coronavirus2020.kz/ru"
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=10)
 
     soup = BeautifulSoup(response.text, features="lxml")
 
