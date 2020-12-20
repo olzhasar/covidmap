@@ -1,0 +1,23 @@
+name: remote ssh command
+on:
+  push:
+    branches:
+      - master
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: deploy via ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd /srv/covidmap
+          git pull
+          flask db upgrade -d /srv/app/migrations
+          supervisorctl signal HUP server
+          supervisorctl restart scheduler
