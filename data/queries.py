@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import pytz
 
-from server import CaseData, Location, cache
+from sqlalchemy import func
+from server import CaseData, Location, cache, db
 from utils import get_current_time_date
 
 
@@ -58,7 +59,13 @@ def get_df(end_date=None):
     query = (
         query.join(CaseData.location)
         .order_by("date")
-        .values("date", "confirmed", "recovered", "fatal", "location_id",)
+        .values(
+            "date",
+            "confirmed",
+            "recovered",
+            "fatal",
+            "location_id",
+        )
     )
     df = pd.DataFrame(query)
 
@@ -186,3 +193,25 @@ def get_updated_at():
         .updated_at.astimezone(pytz.timezone("Asia/Almaty"))
         .strftime("%d-%m-%Y %H:%M")
     )
+
+
+def load_current_data():
+    session = db.session
+
+    query = (
+        session.query(
+            func.sum(CaseData.confirmed),
+            func.sum(CaseData.recovered),
+            func.sum(CaseData.fatal),
+            "location.minzdrav_name",
+        )
+        .join(CaseData.location)
+        .group_by("location.minzdrav_name")
+    )
+
+    values_dict = {
+        row[3]: {"confirmed": row[0], "recovered": row[1], "fatal": row[2]}
+        for row in query
+    }
+
+    return values_dict

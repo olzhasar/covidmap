@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from data import get_df, get_updated_at
+from data.queries import get_df, get_updated_at
 from figures.charts import (
     render_confirmed_cumulative_by_region_chart,
     render_confirmed_cumulative_chart,
@@ -21,8 +21,14 @@ if not server.debug:
 
 META_TAGS = [
     {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
-    {"name": "description", "content": server.config["SEO_DESCRIPTION"],},
-    {"name": "google-site-verification", "content": server.config["GOOGLE_META"],},
+    {
+        "name": "description",
+        "content": server.config["SEO_DESCRIPTION"],
+    },
+    {
+        "name": "google-site-verification",
+        "content": server.config["GOOGLE_META"],
+    },
     {"property": "og:image", "content": "https://covidmap.kz/assets/covidmap.kz.jpg"},
     {"property": "og:image:type", "content": "image/jpeg"},
     {"property": "og:image:width", "content": "1905"},
@@ -83,7 +89,8 @@ def render_layout():
                         children=[
                             html.H2(summary.confirmed, className="card-title danger"),
                             html.H3(
-                                "Зарегистрированных случаев", className="card-subtitle",
+                                "Зарегистрированных случаев",
+                                className="card-subtitle",
                             ),
                         ],
                         className="card",

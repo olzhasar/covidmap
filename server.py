@@ -27,7 +27,7 @@ auth = BasicAuth(server)
 db = SQLAlchemy(server)
 migrate = Migrate(server, db)
 
-from models import CaseData, Location  # noqa E402 isort:skip
+from data.models import CaseData, Location  # noqa E402 isort:skip
 
 
 class AuthException(HTTPException):

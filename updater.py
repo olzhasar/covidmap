@@ -1,46 +1,15 @@
-from datetime import datetime
-
-import pytz
-from sqlalchemy import func
-
 from fetchers.minzdrav import fetch_data
-from server import cache, db, log, server
+from server import cache, db, log
 
-from models import CaseData, Location  # isort:skip
-
-
-def load_current_data():
-    session = db.session
-
-    query = (
-        session.query(
-            func.sum(CaseData.confirmed),
-            func.sum(CaseData.recovered),
-            func.sum(CaseData.fatal),
-            "location.minzdrav_name",
-        )
-        .join(CaseData.location)
-        .group_by("location.minzdrav_name")
-    )
-
-    values_dict = {
-        row[3]: {"confirmed": row[0], "recovered": row[1], "fatal": row[2]}
-        for row in query
-    }
-
-    return values_dict
-
-
-def get_time_date():
-    tz = pytz.timezone("Asia/Almaty")
-    now = datetime.now(tz)
-    return now, now.date()
+from utils import get_current_time_date
+from data.models import CaseData, Location  # isort:skip
+from data.queries import load_current_data
 
 
 def update_data():
     remote_data = fetch_data()
     current_data = load_current_data()
-    now, today = get_time_date()
+    now, today = get_current_time_date()
 
     updated_count = 0
     created_count = 0
