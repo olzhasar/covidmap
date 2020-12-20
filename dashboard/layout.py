@@ -1,9 +1,9 @@
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
 from data.queries import get_df, get_updated_at
-from figures.charts import (
+
+from .figures.charts import (
     render_confirmed_cumulative_by_region_chart,
     render_confirmed_cumulative_chart,
     render_confirmed_daily_chart,
@@ -11,39 +11,8 @@ from figures.charts import (
     render_fatal_cumulative_chart,
     render_recovered_cumulative_chart,
 )
-from figures.map import get_map
-from figures.table import get_table
-from server import cache, server
-
-external_scripts = []
-if not server.debug:
-    external_scripts.append(server.config["GOOGLE_ANALYTICS_URL"])
-
-META_TAGS = [
-    {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
-    {
-        "name": "description",
-        "content": server.config["SEO_DESCRIPTION"],
-    },
-    {
-        "name": "google-site-verification",
-        "content": server.config["GOOGLE_META"],
-    },
-    {"property": "og:image", "content": "https://covidmap.kz/assets/covidmap.kz.jpg"},
-    {"property": "og:image:type", "content": "image/jpeg"},
-    {"property": "og:image:width", "content": "1905"},
-    {"property": "og:image:height", "content": "1322"},
-]
-
-app = dash.Dash(
-    "COVID-19 Map Kazakhstan",
-    server=server,
-    external_scripts=external_scripts,
-    meta_tags=META_TAGS,
-)
-
-app.title = server.config["SEO_TITLE"]
-app.scripts.serve_locally = True
+from .figures.map import get_map
+from .figures.table import get_table
 
 
 def render_layout():
@@ -154,10 +123,3 @@ def render_layout():
         className="dashboard",
     )
     return layout
-
-
-app.layout = render_layout
-
-
-if __name__ == "__main__":
-    app.run_server()

@@ -1,7 +1,6 @@
 import dash_table
+from app.cache import cache
 from pandas import DataFrame
-
-from server import cache
 
 
 def get_increase_str(x):
@@ -32,8 +31,15 @@ def get_table(df: DataFrame):
             {"name": "За сегодня", "id": "increase"},
         ],
         merge_duplicate_headers=True,
-        style_header={"fontWeight": "700", "whiteSpace": "normal", "height": "auto",},
-        style_data={"whiteSpace": "normal", "height": "auto",},
+        style_header={
+            "fontWeight": "700",
+            "whiteSpace": "normal",
+            "height": "auto",
+        },
+        style_data={
+            "whiteSpace": "normal",
+            "height": "auto",
+        },
         style_cell={
             "backgroundColor": "#22252b",
             "color": "#bdbdbd",
@@ -42,9 +48,17 @@ def get_table(df: DataFrame):
             "fontFamily": "'Roboto Slab', sans-serif",
             "padding": "5px",
         },
-        style_cell_conditional=[{"if": {"column_id": "name"}, "textAlign": "left",},],
+        style_cell_conditional=[
+            {
+                "if": {"column_id": "name"},
+                "textAlign": "left",
+            },
+        ],
         style_data_conditional=[
-            {"if": {"column_id": "increase"}, "color": "rgb(250,170,0,0.7)",},
+            {
+                "if": {"column_id": "increase"},
+                "color": "rgb(250,170,0,0.7)",
+            },
         ],
         editable=False,
         row_selectable=False,

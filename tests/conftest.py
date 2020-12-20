@@ -1,13 +1,18 @@
 import pytest
 
-from server import server
+from app import create_app
 
 
-@pytest.fixture
-def client():
-    return server.test_client()
+@pytest.fixture(scope="session")
+def app():
+    return create_app()
 
 
-@pytest.fixture
-def config():
-    return server.config
+@pytest.fixture(scope="session")
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture(scope="session")
+def config(app):
+    return app.config

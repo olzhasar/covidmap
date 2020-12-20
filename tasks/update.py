@@ -1,9 +1,10 @@
-from fetchers.minzdrav import fetch_data
 from server import cache, db, log
-
 from utils import get_current_time_date
-from data.models import CaseData, Location  # isort:skip
+
 from data.queries import load_current_data
+from fetchers.minzdrav import fetch_data
+
+from data.models import CaseData, Location  # isort:skip
 
 
 def update_data():

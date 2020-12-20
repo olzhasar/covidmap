@@ -2,7 +2,7 @@ import os
 
 from sqlalchemy import create_engine, select
 
-from server import *
+from app.server import *
 
 engine_lite = create_engine("sqlite:///db2.sqlite3")
 engine_postgres = create_engine(os.getenv("POSTGRES_URL"))

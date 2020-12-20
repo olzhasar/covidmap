@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from server import db
+from .database import db
 
 
 class Location(db.Model):
