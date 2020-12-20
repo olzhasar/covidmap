@@ -2,7 +2,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pandas import DataFrame
 
-from server import cache
+from app.cache import cache
 
 CHART_HOVER_TEMPLATE = "<b>%{y}</b> <br> %{x}<extra></extra>"
 
@@ -149,7 +149,11 @@ def render_confirmed_cumulative_by_region_chart(df: DataFrame):
     chart.update_layout(
         title={"text": "Всего случаев в разрезе регионов (Топ 5)"},
         colorway=px.colors.qualitative.Bold,
-        legend=dict(traceorder="reversed", x=0.05, y=1.0,),
+        legend=dict(
+            traceorder="reversed",
+            x=0.05,
+            y=1.0,
+        ),
     )
 
     return chart
@@ -190,7 +194,9 @@ def render_recovered_cumulative_chart(df: DataFrame):
             hovertemplate=CHART_HOVER_TEMPLATE,
         )
     )
-    chart.update_layout(title={"text": "Всего выздоровевших"},)
+    chart.update_layout(
+        title={"text": "Всего выздоровевших"},
+    )
 
     return chart
 
@@ -209,6 +215,8 @@ def render_fatal_cumulative_chart(df: DataFrame):
             hovertemplate=CHART_HOVER_TEMPLATE,
         )
     )
-    chart.update_layout(title={"text": "Всего смертей"},)
+    chart.update_layout(
+        title={"text": "Всего смертей"},
+    )
 
     return chart

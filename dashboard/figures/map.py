@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
+from flask import current_app
 
-from server import cache, server
+from app.cache import cache
 
 
 @cache.memoize()
@@ -92,8 +93,8 @@ def get_map(df, updated_at=None):
             },
         },
         mapbox=dict(
-            accesstoken=server.config["MAPBOX_TOKEN"],
-            style=server.config["MAPBOX_STYLE_URL"],
+            accesstoken=current_app.config["MAPBOX_TOKEN"],
+            style=current_app.config["MAPBOX_STYLE_URL"],
             bearing=0,
             center=go.layout.mapbox.Center(lat=48.0196, lon=66.9237),
             zoom=3,
