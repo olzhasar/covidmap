@@ -5,8 +5,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 from app.cache import cache
 from app.config import Config
-
-from .update import update_data
+from tasks.update import update_data
 
 if __name__ == "__main__":
 
