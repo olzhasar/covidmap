@@ -18,6 +18,6 @@ jobs:
         script: |
           cd /srv/covidmap
           git pull
-          flask db upgrade -d /srv/app/migrations
+          flask db upgrade
           supervisorctl signal HUP server
           supervisorctl restart scheduler
