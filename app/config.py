@@ -35,3 +35,9 @@ class Config(object):
 
     SEO_TITLE = "Карта коронавирусной инфекции COVID-19 - Казахстан"
     SEO_DESCRIPTION = "Количество зарегистрированных случаев заболевания коронавирусом по регионам. Динамика изменений"
+
+
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "POSTGRES_URL", "postgresql://covidmap:covidmap@localhost:5432/covidmap_test"
+    )
