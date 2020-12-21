@@ -43,3 +43,5 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "POSTGRES_URL", "postgresql://covidmap:covidmap@localhost:5432/covidmap_test"
     )
+
+    SENTRY_DSN = None
