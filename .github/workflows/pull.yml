@@ -3,7 +3,6 @@ on:
   push:
     paths-ignore:
       - 'tests/**'
-      - '.github/**'
       - .gitignore
       - README.md
       - setup.cfg
