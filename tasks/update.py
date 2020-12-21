@@ -21,6 +21,7 @@ def update_data():
             remote_data = fetch_data()
         except RequestException as e:
             log.error(f"Failed to load remote data {e}")
+            send_telegram_message(f"Update failed\n{e}")
             return
 
         current_data = load_current_data()
