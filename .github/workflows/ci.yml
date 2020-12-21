@@ -2,8 +2,8 @@ name: remote ssh command
 on:
   push:
     paths-ignore:
-      - 'tests/*'
-      - '.github/*'
+      - 'tests/**'
+      - '.github/**'
       - .gitignore
       - README.md
       - setup.cfg
