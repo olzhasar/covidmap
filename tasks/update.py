@@ -7,6 +7,7 @@ from common.utils import get_current_time_date
 from data.database import db
 from data.queries import load_current_data
 from fetchers.minzdrav import fetch_data
+from tasks.telegram import send_telegram_message
 
 from data.models import CaseData, Location  # isort:skip
 
@@ -81,7 +82,9 @@ def update_data():
 
         if created_count:
             log.info(f"Created {created_count} records")
+            send_telegram_message(f"Created {created_count} new records")
         if updated_count:
             log.info(f"Updated {updated_count} records")
+            send_telegram_message(f"Updated {created_count} records")
         if created_count or updated_count:
             cache.clear()

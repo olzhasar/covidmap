@@ -1,6 +1,11 @@
 import os
 
+from dotenv import load_dotenv
+
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
+
+load_dotenv()
 
 
 class Config(object):
@@ -38,6 +43,9 @@ class Config(object):
 
     SENTRY_DSN = os.getenv("SENTRY_DSN")
 
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+    TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
 
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv(
@@ -45,3 +53,6 @@ class TestConfig(Config):
     )
 
     SENTRY_DSN = None
+
+    TELEGRAM_TOKEN = None
+    TELEGRAM_CHAT_ID = None

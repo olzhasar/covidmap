@@ -44,6 +44,7 @@ psycopg2-binary = "*"
 # Task scheduler
 APScheduler = "*"
 sentry-sdk = {extras = ["flask"], version = "*"}
+python-telegram-bot = "*"
 
 [requires]
 python_version = "3.7"
