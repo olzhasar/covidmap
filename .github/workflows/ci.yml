@@ -18,6 +18,7 @@ jobs:
         script: |
           cd /srv/covidmap
           git pull
+          pipenv install --system
           flask db upgrade
           supervisorctl signal HUP server
           supervisorctl restart scheduler
