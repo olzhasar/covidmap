@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 import pytz
+from sqlalchemy import func
+
 from app.cache import cache
 from common.utils import get_current_time_date
-from sqlalchemy import func
 
 from .models import CaseData, Location, db
 
@@ -13,7 +14,8 @@ def load_df_from_db(end_date=None):
     query = CaseData.query
     if end_date:
         query = query.filter(CaseData.date <= end_date)
-    query = query.join(CaseData.location).values(
+
+    fields = [
         "date",
         "confirmed",
         "recovered",
@@ -22,8 +24,11 @@ def load_df_from_db(end_date=None):
         "location.name",
         "location.latitude",
         "location.longitude",
-    )
-    df = pd.DataFrame(query)
+    ]
+
+    query = query.join(CaseData.location).values(*fields)
+
+    df = pd.DataFrame(query, columns=fields)
     if not df.empty:
         df.sort_values("date", inplace=True)
 
