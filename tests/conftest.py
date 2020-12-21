@@ -1,6 +1,6 @@
 import pytest
 
-from app import create_app
+from app.factory import create_app
 from data.database import db
 
 
