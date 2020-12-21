@@ -1,3 +1,5 @@
+from requests.exceptions import RequestException
+
 from app.cache import cache
 from app.factory import create_app
 from app.log import log
@@ -14,7 +16,12 @@ def update_data():
 
     with app.app_context():
 
-        remote_data = fetch_data()
+        try:
+            remote_data = fetch_data()
+        except RequestException as e:
+            log.error(f"Failed to load remote data {e}")
+            return
+
         current_data = load_current_data()
         now, today = get_current_time_date()
 
