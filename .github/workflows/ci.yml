@@ -4,9 +4,9 @@ on:
     paths-ignore:
       - 'tests/*'
       - '.github/*'
-      - '.gitignore'
-      - 'README.md'
-      - 'setup.cfg'
+      - .gitignore
+      - README.md
+      - setup.cfg
     branches:
       - master
 jobs:
