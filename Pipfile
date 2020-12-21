@@ -43,6 +43,7 @@ redis = "*"
 psycopg2-binary = "*"
 # Task scheduler
 APScheduler = "*"
+sentry-sdk = {extras = ["flask"], version = "*"}
 
 [requires]
 python_version = "3.7"
