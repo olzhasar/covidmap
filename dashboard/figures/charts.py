@@ -109,6 +109,8 @@ def render_confirmed_cumulative_chart(df: DataFrame):
 
 @cache.memoize()
 def render_confirmed_daily_chart(df: DataFrame):
+    df = df.tail(20)
+
     chart = go.Figure(layout=CHART_LAYOUT)
     chart.add_trace(
         go.Bar(
