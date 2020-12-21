@@ -90,13 +90,20 @@ def get_df(end_date=None):
 
 @cache.memoize()
 def get_updated_at():
-    return (
+    most_recent = (
         CaseData.query.filter(CaseData.updated_at.isnot(None))
         .order_by(CaseData.updated_at.desc())
         .first()
-        .updated_at.astimezone(pytz.timezone("Asia/Almaty"))
-        .strftime("%d-%m-%Y %H:%M")
     )
+
+    if not most_recent:
+        return ""
+
+    tz = pytz.timezone("Asia/Almaty")
+
+    value = tz.localize(most_recent.updated_at)
+
+    return value.strftime("%d-%m-%Y %H:%M")
 
 
 def load_current_data():

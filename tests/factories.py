@@ -4,18 +4,6 @@ from data.database import db
 from data.models import CaseData, Location
 
 
-class CaseDataFactory(factory.alchemy.SQLAlchemyModelFactory):
-    location_id = factory.Faker("pyint", min_value=1, max_value=10)
-    date = factory.Faker("date_this_month")
-    confirmed = factory.Faker("pyint", min_value=1, max_value=1000)
-    recovered = factory.Faker("pyint", min_value=1, max_value=1000)
-    fatal = factory.Faker("pyint", min_value=1, max_value=1000)
-
-    class Meta:
-        model = CaseData
-        sqlalchemy_session = db.session
-
-
 class LocationFactory(factory.alchemy.SQLAlchemyModelFactory):
     name = factory.Faker("city")
 
@@ -29,4 +17,16 @@ class LocationFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         model = Location
+        sqlalchemy_session = db.session
+
+
+class CaseDataFactory(factory.alchemy.SQLAlchemyModelFactory):
+    location = factory.SubFactory(LocationFactory)
+    date = factory.Faker("date_this_month")
+    confirmed = factory.Faker("pyint", min_value=1, max_value=1000)
+    recovered = factory.Faker("pyint", min_value=1, max_value=1000)
+    fatal = factory.Faker("pyint", min_value=1, max_value=1000)
+
+    class Meta:
+        model = CaseData
         sqlalchemy_session = db.session
