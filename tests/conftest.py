@@ -1,12 +1,19 @@
 import flask_migrate
 import pytest
 from app import create_app
+
 from data.database import db
 
 
 @pytest.fixture(scope="session")
 def app():
     return create_app(testing=True)
+
+
+@pytest.fixture
+def with_context(app):
+    with app.app_context():
+        yield
 
 
 @pytest.fixture(scope="session", autouse=True)
