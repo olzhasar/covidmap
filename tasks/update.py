@@ -1,5 +1,5 @@
-from app import create_app
 from app.cache import cache
+from app.factory import create_app
 from app.log import log
 from common.utils import get_current_time_date
 from data.database import db
