@@ -35,8 +35,4 @@ def create_app(testing=False):
     def logout():
         raise AuthException("You have been logged out")
 
-    @app.route("/debug-sentry")
-    def trigger_error():
-        return 1 / 0
-
     return app
