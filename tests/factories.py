@@ -1,7 +1,7 @@
 import factory
 
 from data.database import db
-from data.models import CaseData
+from data.models import CaseData, Location
 
 
 class CaseDataFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -13,4 +13,20 @@ class CaseDataFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         model = CaseData
+        sqlalchemy_session = db.session
+
+
+class LocationFactory(factory.alchemy.SQLAlchemyModelFactory):
+    name = factory.Faker("city")
+
+    latitude = factory.Faker("latitude")
+    longitude = factory.Faker("longitude")
+
+    api_id = factory.Sequence(lambda n: n)
+    api_name = factory.SelfAttribute("name")
+
+    minzdrav_name = factory.SelfAttribute("name")
+
+    class Meta:
+        model = Location
         sqlalchemy_session = db.session
