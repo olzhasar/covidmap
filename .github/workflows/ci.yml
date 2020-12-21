@@ -1,20 +1,19 @@
-name: Pull from git repository
+name: remote ssh command
 on:
   push:
     paths-ignore:
       - 'tests/**'
+      - '.github/**'
       - .gitignore
       - README.md
       - setup.cfg
     branches:
       - master
 jobs:
+
   build:
     name: Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /srv/covidmap
     steps:
     - name: deploy via ssh
       uses: appleboy/ssh-action@master
@@ -23,4 +22,9 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         script: |
+          cd /srv/covidmap
           git pull
+          pipenv install --system
+          flask db upgrade
+          supervisorctl signal HUP server
+          supervisorctl restart scheduler
