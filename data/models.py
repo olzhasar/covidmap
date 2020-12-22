@@ -23,7 +23,7 @@ class CaseData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True, default=date.today, nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
-    confirmed = db.Column(db.Integer, nullable=False)
+    confirmed = db.Column(db.Integer, default=0)
     recovered = db.Column(db.Integer, default=0)
     fatal = db.Column(db.Integer, default=0)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
