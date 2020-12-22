@@ -4,12 +4,12 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def fetch_data():
+def fetch_data(parser="lxml"):
     url = "https://www.coronavirus2020.kz/ru"
 
     response = requests.get(url, timeout=10)
 
-    soup = BeautifulSoup(response.text, features="lxml")
+    soup = BeautifulSoup(response.text, features=parser)
 
     # Confirmed
 
