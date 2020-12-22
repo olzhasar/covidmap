@@ -1,91 +1,127 @@
+from datetime import date, datetime
+from typing import Dict
+
 from requests.exceptions import RequestException
 
 from app.cache import cache
 from app.factory import create_app
 from app.log import log
 from common.utils import get_current_time_date
+from data import queries
 from data.database import db
-from data.queries import load_current_data
+from data.models import CaseData
 from fetchers.minzdrav import fetch_data
 from tasks.telegram import send_telegram_message
 
-from data.models import CaseData, Location  # isort:skip
+Record = Dict[str, int]
+DataDict = Dict[str, Record]
+
+
+class UpdateError(Exception):
+    pass
+
+
+def _compare_records(existing: Record, new: Record) -> Record:
+    result: Record = {}
+
+    for field in ["confirmed", "recovered", "fatal"]:
+        diff = new[field] - existing[field]
+
+        if diff < 0:
+            raise ValueError("Existing value is greater than new")
+        if diff > 0:
+            result[field] = diff
+
+    return result
+
+
+def compare_data(existing_data: DataDict, new_data: DataDict) -> DataDict:
+    result: DataDict = {}
+
+    for location_name, record in new_data.items():
+        existing_record = existing_data.get(location_name)
+
+        if not existing_record:
+            result[location_name] = record
+        else:
+            diff = _compare_records(existing_record, record)
+            if diff:
+                result[location_name] = diff
+
+    return result
+
+
+def update_or_create_record(
+    *, location_id: int, record_date: date, update_time: datetime, **kwargs
+):
+    instance = CaseData.query.filter_by(
+        date=record_date, location_id=location_id
+    ).first()
+
+    if instance:
+        for key, value in kwargs.items():
+            old_val = getattr(instance, key)
+            setattr(instance, key, old_val + value)
+
+        instance.updated_at = update_time
+
+        db.session.commit()
+
+        return instance, False
+
+    instance = CaseData(
+        date=record_date,
+        location_id=location_id,
+        updated_at=update_time,
+        **kwargs,
+    )
+
+    db.session.add(instance)
+    db.session.commit()
+
+    return instance, True
 
 
 def update_data():
+    try:
+        new_data = fetch_data(parser="html.parser")
+    except RequestException as e:
+        log.error(f"Failed to load remote data {e}")
+        send_telegram_message(f"Update failed\n{e}")
+        return
+
+    existing_data = queries.load_current_data()
+
+    now, today = get_current_time_date()
+
+    diff_data = compare_data(existing_data, new_data)
+
+    if not diff_data:
+        return
+
+    locations_mapping = queries.get_locations_minzdrav_name_mapping()
+
+    message = "New data:\n"
+
+    for location_name, record in diff_data.items():
+        location_id = locations_mapping[location_name]
+
+        update_or_create_record(
+            location_id=location_id, record_date=today, update_time=now, **record
+        )
+
+        message += f"\n{location_name}:"
+        for key, value in record.items():
+            message += f"\n{key} - {value}"
+
+    log.info(message)
+    send_telegram_message(message)
+
+    cache.clear()
+
+
+def update_task():
     app = create_app()
 
     with app.app_context():
-
-        try:
-            remote_data = fetch_data()
-        except RequestException as e:
-            log.error(f"Failed to load remote data {e}")
-            send_telegram_message(f"Update failed\n{e}")
-            return
-
-        current_data = load_current_data()
-        now, today = get_current_time_date()
-
-        updated_count = 0
-        created_count = 0
-
-        def create(record, location_id):
-            confirmed = max(record["confirmed"], 0)
-            recovered = max(record["recovered"], 0)
-            fatal = max(record["fatal"], 0)
-
-            if any([confirmed, recovered, fatal]):
-                new = CaseData(
-                    location_id=location_id,
-                    confirmed=record["confirmed"],
-                    recovered=record["recovered"],
-                    fatal=record["fatal"],
-                    updated_at=now,
-                    date=today,
-                )
-                db.session.add(new)
-                db.session.commit()
-                return 1
-            return 0
-
-        for location_name, record in remote_data.items():
-            location_id = (
-                Location.query.filter_by(minzdrav_name=location_name).first().id
-            )
-
-            current = current_data.get(location_name)
-
-            if not current:
-                created_count += create(record, location_id)
-            else:
-                keys = ["confirmed", "recovered", "fatal"]
-                for k in keys:
-                    record[k] = record[k] - current[k]
-
-                if any(record[k] for k in keys):
-
-                    instance = (
-                        CaseData.query.filter_by(date=today)
-                        .join(CaseData.location)
-                        .filter_by(minzdrav_name=location_name)
-                        .first()
-                    )
-                    if not instance:
-                        created_count += create(record, location_id)
-                    else:
-                        instance.confirmed += record["confirmed"]
-                        instance.recovered += record["recovered"]
-                        instance.fatal += record["fatal"]
-                        instance.updated_at = now
-                        db.session.commit()
-                        updated_count += 1
-
-        if created_count:
-            log.info(f"Created {created_count} records")
-            send_telegram_message(f"Created {created_count} new records")
-        if updated_count:
-            log.info(f"Updated {updated_count} records")
-            send_telegram_message(f"Updated {created_count} records")
-        if created_count or updated_count:
-            cache.clear()
+        update_data()
