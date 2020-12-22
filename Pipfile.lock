@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "20d8c3ccb6f3c58e79da81fa08503d4ae86246eb33a90367213f020591961902"
+            "sha256": "dfc6f44ce9549c2f20d83f47ab67929d990f98d63c52f08d0742e8df7629f0ba"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -782,7 +782,7 @@
                 "sha256:02b35de52f4699a78f6ac4518e4cd3390dddc43b0aeb978335a8f270a2d9668b",
                 "sha256:1cf08e441f913ff5e59b19cc065a8faa9dd1ddc442eaf0375294f344581a0643"
             ],
-            "markers": "python_version >= '3.5'",
+            "index": "pypi",
             "version": "==1.0.0"
         },
         "importlib-metadata": {
@@ -884,14 +884,6 @@
             ],
             "index": "pypi",
             "version": "==6.2.1"
-        },
-        "pytest-freezegun": {
-            "hashes": [
-                "sha256:19c82d5633751bf3ec92caa481fb5cffaac1787bd485f0df6436fd6242176949",
-                "sha256:5318a6bfb8ba4b709c8471c94d0033113877b3ee02da5bfcd917c1889cde99a7"
-            ],
-            "index": "pypi",
-            "version": "==0.4.2"
         },
         "pytest-mock": {
             "hashes": [
