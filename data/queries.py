@@ -15,6 +15,17 @@ def get_locations_ids():
 
 
 @cache.memoize()
+def get_locations_minzdrav_name_mapping():
+    query = (
+        Location.query.with_entities(Location.id, Location.minzdrav_name)
+        .order_by("id")
+        .all()
+    )
+
+    return {item.minzdrav_name: item.id for item in query}
+
+
+@cache.memoize()
 def get_locations_df():
     fields = (
         "id",

@@ -24,6 +24,26 @@ class TestGetLocationsIds:
         assert ids == [1, 3, 34, 55]
 
 
+class TestGetLocationsMinzdravNameMapping:
+    def test_no_data(self, use_db):
+        mapping = queries.get_locations_minzdrav_name_mapping()
+
+        assert mapping == {}
+
+    def test_ok(self, use_db):
+        LocationFactory(id=1, minzdrav_name="Almaty")
+        LocationFactory(id=3, minzdrav_name="Astana")
+        LocationFactory(id=55, minzdrav_name="Shymkent")
+
+        mapping = queries.get_locations_minzdrav_name_mapping()
+
+        assert mapping == {
+            "Almaty": 1,
+            "Astana": 3,
+            "Shymkent": 55,
+        }
+
+
 class TestGetLocationsDF:
     def test_no_data(self, use_db):
         df = queries.get_locations_df()
