@@ -1,9 +1,8 @@
 import pandas as pd
-import pytz
 from sqlalchemy import func
 
 from app.cache import cache
-from common.utils import get_current_time_date
+from common.utils import get_current_time_date, localize_time
 
 from .models import CaseData, Location, db
 
@@ -110,9 +109,7 @@ def get_updated_at():
     if not most_recent:
         return ""
 
-    tz = pytz.timezone("Asia/Almaty")
-
-    value = tz.localize(most_recent.updated_at)
+    value = localize_time(most_recent.updated_at)
 
     return value.strftime("%d-%m-%Y %H:%M")
 
