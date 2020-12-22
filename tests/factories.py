@@ -5,6 +5,8 @@ from data.models import CaseData, Location
 
 
 class LocationFactory(factory.alchemy.SQLAlchemyModelFactory):
+    id = factory.Sequence(lambda n: n)
+
     name = factory.Faker("city")
 
     latitude = factory.Faker("latitude")
