@@ -11,6 +11,7 @@ isort = "*"
 # Testing
 pytest = "*"
 factory-boy = "*"
+pytest-mock = "*"
 
 [packages]
 # Flask
