@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import func
 
 from app.cache import cache
-from common.utils import get_current_time_date, localize_time
+from common.utils import get_local_date, localize_time
 
 from .models import CaseData, Location, db
 
@@ -42,10 +42,10 @@ def get_locations_df():
 @cache.memoize()
 def get_date_range(start_date=None, end_date=None):
     if not start_date:
-        _, start_date = get_current_time_date()
+        start_date = get_local_date()
 
     if not end_date:
-        _, end_date = get_current_time_date()
+        end_date = get_local_date()
 
     return pd.date_range(start_date, end_date)
 

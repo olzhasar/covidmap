@@ -3,7 +3,7 @@ from typing import Dict
 from app.cache import cache
 from app.factory import create_app
 from app.log import log
-from common.utils import get_current_time_date
+from common.utils import get_local_time_and_date
 from data import queries, services
 from fetchers.minzdrav import FetchParseError, FetchServerError, fetch_data
 from tasks.telegram import send_telegram_message
@@ -55,7 +55,7 @@ def update_data():
 
     existing_data = queries.load_current_data()
 
-    now, today = get_current_time_date()
+    now, today = get_local_time_and_date()
 
     diff_data = compare_data(existing_data, new_data)
 
