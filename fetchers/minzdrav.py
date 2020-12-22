@@ -2,20 +2,34 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
+from requests.exceptions import RequestException
+
+URL = "https://www.coronavirus2020.kz/ru"
 
 
-def fetch_data(parser="lxml"):
-    url = "https://www.coronavirus2020.kz/ru"
+class FetchServerError(Exception):
+    pass
 
-    response = requests.get(url, timeout=10)
 
-    soup = BeautifulSoup(response.text, features=parser)
+class FetchParseError(Exception):
+    pass
 
-    # Confirmed
+
+def load_html():
+    try:
+        response = requests.get(URL, timeout=10)
+    except RequestException as e:
+        raise FetchServerError(str(e))
+
+    return response.text
+
+
+def extract_data(response_text: str, parser="parser.html"):
+    soup = BeautifulSoup(response_text, features=parser)
 
     data = {}
 
-    def extract_from_div(parent_class, child_class, output_key):
+    def _extract_from_div(parent_class, child_class, output_key):
         divs = (
             soup.find("div", {"class": parent_class})
             .find("div", {"class": child_class})
@@ -33,8 +47,24 @@ def fetch_data(parser="lxml"):
 
             data[name] = record
 
-    extract_from_div("last_info_covid_bl", "city_cov", "confirmed")
-    extract_from_div("red_line_covid_bl", "city_cov", "recovered")
-    extract_from_div("deaths_bl", "city_cov", "fatal")
+    divs = (
+        ("last_info_covid_bl", "city_cov", "confirmed"),
+        ("red_line_covid_bl", "city_cov", "recovered"),
+        ("deaths_bl", "city_cov", "fatal"),
+    )
+
+    for row in divs:
+        _extract_from_div(*row)
+
+    return data
+
+
+def fetch_data(parser="lxml"):
+    html = load_html()
+
+    try:
+        data = extract_data(html, parser=parser)
+    except Exception as e:
+        raise FetchServerError(str(e))
 
     return data
