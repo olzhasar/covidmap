@@ -9,11 +9,6 @@ def get_local_time():
     return datetime.now(tz)
 
 
-def get_local_time_and_date():
-    now = get_local_time()
-    return now, now.date()
-
-
 def get_local_date():
     return get_local_time().date()
 
