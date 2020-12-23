@@ -22,7 +22,7 @@ class Config(object):
     MAPBOX_STYLE_URL = os.getenv("MAPBOX_STYLE_URL", "dark")
 
     CACHE_TYPE = os.getenv("CACHE_TYPE", "null")
-    CACHE_DEFAULT_TIMEOUT = 0
+    CACHE_DEFAULT_TIMEOUT = 3600
     CACHE_DIR = os.path.join(BASEDIR, "cache")
 
     BASIC_AUTH_USERNAME = os.getenv("AUTH_USERNAME", "admin")
