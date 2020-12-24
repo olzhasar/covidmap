@@ -55,3 +55,5 @@ class TestConfig(Config):
 
     TELEGRAM_TOKEN = None
     TELEGRAM_CHAT_ID = None
+
+    CACHE_TYPE = "null"
