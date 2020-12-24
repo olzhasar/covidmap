@@ -80,11 +80,12 @@ def update_data():
     log.info(message)
     send_telegram_message(message)
 
-    cache.clear()
-
 
 def update_task():
     app = create_app()
 
     with app.app_context():
         update_data()
+
+    cache_clear_result = cache.clear()
+    log.info(f"Cache clear result: {cache_clear_result}")
