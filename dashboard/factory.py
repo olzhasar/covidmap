@@ -1,4 +1,7 @@
+import dash_core_components as dcc
+import dash_html_components as html
 from dash import Dash
+from dash.dependencies import Input, Output
 
 from .layout import render_layout
 
@@ -34,8 +37,17 @@ def create_dashboard(app):
         meta_tags=META_TAGS,
     )
 
-    with app.app_context():
-        dashboard.layout = render_layout()
+    dashboard.layout = html.Div(
+        children=[
+            dcc.Input(id="reload_input", value=1, type="hidden"),
+            html.Div(id="content"),
+        ],
+    )
+
+    @dashboard.callback(Output("content", "children"), Input("reload_input", "value"))
+    def render_content(input_value):
+        with app.app_context():
+            return render_layout()
 
     dashboard.title = app.config["SEO_TITLE"]
     dashboard.scripts.serve_locally = True
