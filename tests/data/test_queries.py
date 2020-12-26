@@ -1,10 +1,12 @@
-from datetime import datetime
+from datetime import date, datetime
 
 import pandas as pd
 import pytest
 import pytz
+from freezegun import freeze_time
 
 from data import queries
+from data.models import CaseData
 from tests.factories import CaseDataFactory, LocationFactory
 
 
@@ -117,3 +119,20 @@ class TestGetUpdatedAt:
             CaseDataFactory(updated_at=dt)
 
         assert queries.get_updated_at() == "01-07-2020 18:34"
+
+
+@freeze_time("2020-12-12")
+def test_delete_todays_data(use_db):
+    today = date.today()
+
+    CaseDataFactory.create_batch(5, date=today)
+    CaseDataFactory.create_batch(5, date=date(2020, 11, 11))
+    CaseDataFactory.create_batch(5, date=date(2020, 10, 10))
+
+    assert CaseData.query.filter_by(date=today).count() == 5
+    assert CaseData.query.count() == 15
+
+    queries.delete_todays_data()
+
+    assert CaseData.query.filter_by(date=today).count() == 0
+    assert CaseData.query.count() == 10

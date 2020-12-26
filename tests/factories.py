@@ -20,6 +20,7 @@ class LocationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Location
         sqlalchemy_session = db.session
+        sqlalchemy_get_or_create = ("minzdrav_name",)
 
 
 class CaseDataFactory(factory.alchemy.SQLAlchemyModelFactory):

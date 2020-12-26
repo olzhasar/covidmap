@@ -19,7 +19,10 @@ def _compare_records(existing: Record, new: Record) -> Record:
         diff = new[field] - existing[field]
 
         if diff < 0:
-            raise ValueError("Existing value is greater than new")
+            queries.delete_todays_data()
+            raise ValueError(
+                "Existing cases count is greater than remote\nDeleting today's data"
+            )
         if diff > 0:
             result[field] = diff
 
@@ -57,7 +60,11 @@ def update_data():
 
     today = get_local_date()
 
-    diff_data = compare_data(existing_data, new_data)
+    try:
+        diff_data = compare_data(existing_data, new_data)
+    except ValueError as e:
+        log.error(e)
+        return
 
     if not diff_data:
         return
