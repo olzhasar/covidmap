@@ -234,3 +234,79 @@ class TestUpdateTask:
         assert queries.load_current_data() == remote_data
 
         mock_send_telegram_message.assert_called_once()
+
+    @freeze_time("2020-12-12")
+    def test_remote_cases_greater_than_in_db(
+        self, app, use_db, mock_remote_data, mock_send_telegram_message
+    ):
+        remote_data = {
+            "Алматы": {
+                "confirmed": 1,
+                "recovered": 1,
+                "fatal": 1,
+            },
+            "Астана": {
+                "confirmed": 1,
+                "recovered": 1,
+                "fatal": 1,
+            },
+            "Шымкент": {
+                "confirmed": 1,
+                "recovered": 1,
+                "fatal": 1,
+            },
+        }
+        mock_remote_data.return_value = remote_data
+
+        CaseDataFactory(
+            location__minzdrav_name="Алматы",
+            confirmed=1,
+            recovered=1,
+            fatal=1,
+            date=date(2020, 12, 11),
+        )
+        CaseDataFactory(
+            location__minzdrav_name="Астана",
+            confirmed=1,
+            recovered=1,
+            fatal=1,
+            date=date(2020, 12, 11),
+        )
+        CaseDataFactory(
+            location__minzdrav_name="Шымкент",
+            confirmed=1,
+            recovered=1,
+            fatal=1,
+            date=date(2020, 12, 11),
+        )
+        CaseDataFactory(
+            location__minzdrav_name="Алматы",
+            confirmed=2,
+            recovered=2,
+            fatal=2,
+            date=date(2020, 12, 12),
+        )
+        CaseDataFactory(
+            location__minzdrav_name="Астана",
+            confirmed=3,
+            recovered=3,
+            fatal=3,
+            date=date(2020, 12, 12),
+        )
+        CaseDataFactory(
+            location__minzdrav_name="Шымкент",
+            confirmed=3,
+            recovered=3,
+            fatal=3,
+            date=date(2020, 12, 12),
+        )
+
+        update_data()
+
+        cases = CaseData.query.all()
+
+        assert len(cases) == 3
+
+        assert queries.load_current_data() == remote_data
+
+        mock_send_telegram_message.assert_not_called()
