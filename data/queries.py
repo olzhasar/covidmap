@@ -134,3 +134,9 @@ def load_current_data():
     }
 
     return values_dict
+
+
+def delete_todays_data():
+    today = get_local_date()
+
+    CaseData.query.filter_by(date=today).delete()
